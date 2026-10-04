@@ -300,13 +300,13 @@ function viewer(){
               rows=parsed;fileLabel="data.csv";fileBytes=0;page=1;pageSize=10;sortCol=-1;sortDir=1;
               app.hidden=true;
               showWorkspace();render();scrollToWorkspace();
-            }else sample();
-          }else sample();
+            }else setStatus("");
+          }else setStatus("");
         };
-        get.onerror=()=>sample();
+        get.onerror=()=>setStatus("Could not restore the selected file. Please choose it again.",true);
         tx.oncomplete=()=>db.close();
       };
-      request.onerror=()=>sample();
+      request.onerror=()=>setStatus("Browser storage is unavailable. Please choose the file here.",true);
     }catch(error){
       console.error(error);sample();
     }
@@ -316,7 +316,7 @@ function viewer(){
 }
 
 function input(m=false){
-  app.innerHTML='<input id="f" type="file" accept=".csv,text/csv" '+(m?"multiple":"")+'> <button class="btn" id="go">Process</button><div id="s" class="tool-status"></div><div id="out"></div>';
+  app.innerHTML='<input id="f" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" '+(m?"multiple":"")+'> <button class="btn" id="go">Process</button><div id="s" class="tool-status"></div><div id="out"></div>';
 }
 function files(){
   return Promise.all([...$("#f").files].map(f=>new Promise(z=>{const r=new FileReader;r.onload=()=>z(parse(r.result));r.readAsText(f)})));
@@ -343,7 +343,7 @@ function split(){
   };
 }
 function validate(){
-  input();$("#go").onclick=async()=>{const r=(await files())[0];if(!r?.length)return;const n=r[0].length,b=r.slice(1).filter(x=>x.length!==n).length;
+  input();$("#go").onclick=async()=>{const textValue=await fileText($("#f").files[0]); const parsed=RomitCSV.parseCSV(textValue,{pad:false}).rows; if(!parsed.length)return; const n=parsed[0].length,b=parsed.slice(1).filter(x=>x.length!==n).length;
     $("#out").innerHTML='<p>'+Math.max(0,r.length-1)+' rows · '+n+' columns.</p><p>'+(b?b+" rows have inconsistent columns.":"CSV structure looks consistent.")+'</p>';
   };
 }
@@ -368,11 +368,11 @@ if($("#desc"))$("#desc").textContent=n[1];
 ({viewer,cleaner:clean,merger:merge,splitter:split,validator:validate,csvjson:cjson,jsoncsv:jcsv})[kind]?.();
 if(kind==="sql")viewer();
 
-const savedTheme=localStorage.getItem("romitcsv.theme")==="dark"?"dark":"light";
+const savedTheme=RomitCSV.getTheme();
 document.body.classList.toggle("dark",savedTheme==="dark");
 $("#theme").onclick=()=>{
   const dark=!document.body.classList.contains("dark");
   document.body.classList.toggle("dark",dark);
-  localStorage.setItem("romitcsv.theme",dark?"dark":"light");
+  RomitCSV.setTheme(dark?"dark":"light");
 };
 $("#menu").onclick=()=>$("#nav").classList.toggle("open");
