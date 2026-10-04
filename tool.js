@@ -123,12 +123,29 @@ function viewer(){
   $("#go").onclick=()=>openFile($("#f").files[0]);
   $("#f").onchange=()=>openFile($("#f").files[0]);
 
-  const pending=sessionStorage.getItem("csvtools.pendingFile");
-  if(pending){
-    sessionStorage.removeItem("csvtools.pendingFile");
-    rows=parse(pending);
-    if(rows.length){$("#s").textContent="Loaded CSV from homepage.";render()}
+  function loadPending(){
+    return new Promise(resolve=>{
+      try{
+        const request=indexedDB.open("RomitCSVDB",1);
+        request.onupgradeneeded=()=>request.result.createObjectStore("files");
+        request.onsuccess=()=>{
+          const db=request.result,tx=db.transaction("files","readwrite"),store=tx.objectStore("files"),get=store.get("pendingCsv");
+          get.onsuccess=()=>{
+            const value=get.result;
+            if(value){
+              store.delete("pendingCsv");
+              rows=parse(value);
+              if(rows.length){$("#s").textContent="Loaded CSV from homepage.";render()}
+            }
+            db.close();resolve();
+          };
+          get.onerror=()=>{db.close();resolve()};
+        };
+        request.onerror=()=>resolve();
+      }catch(e){resolve()}
+    });
   }
+  loadPending();
 }
 
 function input(m=false){
@@ -183,6 +200,11 @@ $("#title").textContent=n[0];$("#desc").textContent=n[1];
 ({viewer,cleaner:clean,merger:merge,splitter:split,validator,csvjson:cjson,jsoncsv:jcsv})[kind]?.();
 if(kind==="sql")viewer();
 
-const light=localStorage.getItem("csvtools.theme")==="light";if(light)document.body.classList.add("light");
-$("#theme").onclick=()=>{document.body.classList.toggle("light");localStorage.setItem("csvtools.theme",document.body.classList.contains("light")?"light":"dark")};
+const savedTheme=localStorage.getItem("romitcsv.theme")==="dark"?"dark":"light";
+document.body.classList.toggle("dark",savedTheme==="dark");
+$("#theme").onclick=()=>{
+  const dark=!document.body.classList.contains("dark");
+  document.body.classList.toggle("dark",dark);
+  localStorage.setItem("romitcsv.theme",dark?"dark":"light");
+};
 $("#menu").onclick=()=>$("#nav").classList.toggle("open");
