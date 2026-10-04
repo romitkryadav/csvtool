@@ -146,7 +146,7 @@ dropzone.addEventListener("drop",async event=>{
   try{openText(await file.text(),file.name)}catch(error){$("#editorStatus").textContent="Could not read this CSV file."}
 });
 
-const dark=localStorage.getItem("romitcsv.theme")==="dark";
+const dark=RomitCSV.getTheme()==="dark";
 document.body.classList.toggle("dark",dark);
 $("#editorTheme").setAttribute("aria-pressed",String(dark));
 $("#editorTheme").onclick=()=>{
