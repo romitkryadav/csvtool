@@ -22,14 +22,11 @@ function combineSourceTables(tables){
   }));
   return combined;
 }
-let sourceTables=[
-  {name:"customers.csv",rows:[["Name","Email","City"],["Ada Lovelace","ada@example.com","London"],["Grace Hopper","grace@example.com","New York"]]},
-  {name:"contacts.csv",rows:[["Name","Email","City"],["Alan Turing","alan@example.com","Manchester"],["Katherine Johnson","kj@example.com","White Sulphur Springs"]]}
-];
+let sourceTables=[];
 let hasRealFiles=false;
-let mergedRows=combineSourceTables(sourceTables);
-let sources=sourceTables.map(file=>({name:file.name,rows:file.rows.slice(1).filter(row=>row.some(value=>value.trim())).length}));
-let fileName="merged-sample.csv";
+let mergedRows=[];
+let sources=[];
+let fileName="merged.csv";
 let page=1;
 const pageSize=10;
 
@@ -81,13 +78,14 @@ async function mergeFiles(files,append=false){
 }
 
 render();
+workspace.hidden=true;
 $("#mergerBrowse").onclick=()=>$("#mergerFiles").click();
 $("#mergerFiles").onchange=event=>mergeFiles([...event.target.files],hasRealFiles);
 ["dragenter","dragover"].forEach(type=>dropzone.addEventListener(type,event=>{event.preventDefault();dropzone.classList.add("drag")}));
 ["dragleave","drop"].forEach(type=>dropzone.addEventListener(type,event=>{event.preventDefault();dropzone.classList.remove("drag")}));
 dropzone.addEventListener("drop",event=>mergeFiles([...event.dataTransfer.files]));
 
-const dark=localStorage.getItem("romitcsv.theme")==="dark";
+const dark=RomitCSV.getTheme()==="dark";
 document.body.classList.toggle("dark",dark);
 $("#mergerTheme").setAttribute("aria-pressed",String(dark));
 $("#mergerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#mergerTheme").setAttribute("aria-pressed",String(nextDark));RomitCSV.setTheme(nextDark?"dark":"light")};
