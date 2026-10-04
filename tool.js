@@ -1,6 +1,9 @@
 const $=s=>document.querySelector(s);
 const kind=new URLSearchParams(location.search).get("tool")||"viewer";
 if(kind==="editor")location.replace("editor.html");
+if(kind==="cleaner")location.replace("cleaner.html");
+if(kind==="merger")location.replace("merger.html");
+if(kind==="splitter")location.replace("splitter.html");
 const app=$("#app");
 
 function escapeHTML(v){

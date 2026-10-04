@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Merge multiple CSV and TSV files in your browser and download one combined CSV.">
+<title>Free CSV Merger — RomitCSV</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header viewer-header">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">CSV</span>
+    <span>CSV<span class="brand-accent">Tools</span></span>
+  </a>
+  <nav id="mergerNav" aria-label="Main navigation">
+    <a href="index.html">Home</a>
+    <a href="tool.html?tool=viewer">CSV Viewer</a>
+    <a href="editor.html">CSV Editor</a>
+    <a href="cleaner.html">CSV Cleaner</a>
+    <a class="active" href="merger.html">CSV Merger</a>
+    <a href="splitter.html">CSV Splitter</a>
+    <a href="index.html#converters">Converters</a>
+    <a href="index.html#resources">Resources</a>
+  </nav>
+  <div class="header-actions">
+    <button class="theme-switch" id="mergerTheme" type="button" aria-label="Toggle theme" aria-pressed="false">
+      <span>☼</span><i></i><span>☾</span>
+    </button>
+    <button class="menu-btn" id="mergerMenu" type="button" aria-label="Open menu">Menu</button>
+  </div>
+</header>
+
+<main class="csv-merger-page">
+  <section class="editor-hero">
+    <div class="editor-hero-inner">
+      <div>
+        <span class="viewer-pill">Free Online CSV Merger</span>
+        <h1>Merge Your CSV Files<br><span>In Your Browser</span></h1>
+        <p>Combine multiple CSV or TSV files into one clean dataset.<br>Columns are joined by position; the first file supplies the headers.</p>
+      </div>
+      <div class="editor-upload-card" id="mergerUploadCard">
+        <div class="editor-upload" id="mergerDropzone">
+          <div class="viewer-upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 31V8m0 0-8 8m8-8 8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 27v10a4 4 0 0 0 4 4h18a4 4 0 0 0 4-4V27" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+          <strong>Drop two or more CSV files here</strong>
+          <span>or</span>
+          <input id="mergerFiles" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" multiple hidden>
+          <button class="viewer-primary" id="mergerBrowse" type="button">Choose CSV Files</button>
+          <small>Supports CSV, TSV · Max file size: 50MB each</small>
+          <div id="mergerStatus" class="tool-status" role="status"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="editor-content">
+    <div id="mergerWorkspace" class="merger-workspace"></div>
+  </section>
+</main>
+<script src="merger.js"></script>
+</body>
+</html>
