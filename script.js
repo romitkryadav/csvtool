@@ -5,16 +5,16 @@ function choose(){if(input)input.click()}
 function setTheme(mode){
   document.body.classList.toggle("dark",mode==="dark");
   if(theme)theme.setAttribute("aria-pressed",mode==="dark");
-  localStorage.setItem("romitcsv.theme",mode);
+  RomitCSV.setTheme(mode);
 }
-function savePending(text){
+function savePending(file){
   return new Promise((resolve,reject)=>{
     try{
       const request=indexedDB.open("RomitCSVDB",1);
       request.onupgradeneeded=()=>request.result.createObjectStore("files");
       request.onsuccess=()=>{
         const db=request.result,tx=db.transaction("files","readwrite");
-        tx.objectStore("files").put(text,"pendingCsv");
+        tx.objectStore("files").put(file,"pendingCsv");
         tx.oncomplete=()=>{db.close();resolve()};
         tx.onerror=()=>{db.close();reject(tx.error)};
       };
@@ -53,7 +53,7 @@ if(input){
   }
 }
 if(theme){
-  setTheme(localStorage.getItem("romitcsv.theme")==="dark"?"dark":"light");
+  setTheme(RomitCSV.getTheme());
   theme.onclick=()=>setTheme(document.body.classList.contains("dark")?"light":"dark");
 }
 if(menu)menu.onclick=()=>{const nav=document.getElementById("mainNav");if(nav)nav.classList.toggle("open")};

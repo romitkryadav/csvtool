@@ -4,40 +4,9 @@ function escapeHTML(value){
   return String(value??"").replace(/[&<>\"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));
 }
 
-function detectDelimiter(text){
-  const first=text.replace(/^\uFEFF/,"").split(/\r?\n/).find(line=>line.trim())||"";
-  return [",",";","\t","|"].map(delimiter=>[delimiter,first.split(delimiter).length-1]).sort((a,b)=>b[1]-a[1])[0][0];
-}
-
-function parseCSV(text){
-  text=String(text||"").replace(/^\uFEFF/,"");
-  const delimiter=detectDelimiter(text),rows=[],row=[],cell=[];
-  let quoted=false;
-  for(let i=0;i<text.length;i++){
-    const char=text[i],next=text[i+1];
-    if(char==='"'){
-      if(quoted&&next==='"'){cell.push('"');i++}
-      else quoted=!quoted;
-    }else if(char===delimiter&&!quoted){
-      row.push(cell.join(""));cell.length=0;
-    }else if((char==="\n"||char==="\r")&&!quoted){
-      if(char==="\r"&&next==="\n")i++;
-      row.push(cell.join(""));cell.length=0;
-      if(row.length)rows.push(row.slice());
-      row.length=0;
-    }else cell.push(char);
-  }
-  if(cell.length||row.length){row.push(cell.join(""));rows.push(row.slice())}
-  const width=rows.reduce((max,current)=>Math.max(max,current.length),0);
-  return rows.map(current=>Array.from({length:width},(_,index)=>current[index]??""));
-}
-
-function serializeCSV(rows){
-  return rows.map(row=>row.map(value=>{
-    value=String(value??"");
-    return /[",\n\r]/.test(value)?'"'+value.replace(/"/g,'""')+'"':value;
-  }).join(",")).join("\r\n");
-}
+const detectDelimiter=(text)=>RomitCSV.detectDelimiter(text);
+const parseCSV=(text)=>RomitCSV.parseCSV(text).rows;
+const serializeCSV=(rows,delimiter=",")=>RomitCSV.serializeCSV(rows,delimiter);
 
 const uploadCard=$("#mergerUploadCard");
 const dropzone=$("#mergerDropzone");
@@ -53,14 +22,11 @@ function combineSourceTables(tables){
   }));
   return combined;
 }
-let sourceTables=[
-  {name:"customers.csv",rows:[["Name","Email","City"],["Ada Lovelace","ada@example.com","London"],["Grace Hopper","grace@example.com","New York"]]},
-  {name:"contacts.csv",rows:[["Name","Email","City"],["Alan Turing","alan@example.com","Manchester"],["Katherine Johnson","kj@example.com","White Sulphur Springs"]]}
-];
+let sourceTables=[];
 let hasRealFiles=false;
-let mergedRows=combineSourceTables(sourceTables);
-let sources=sourceTables.map(file=>({name:file.name,rows:file.rows.slice(1).filter(row=>row.some(value=>value.trim())).length}));
-let fileName="merged-sample.csv";
+let mergedRows=[];
+let sources=[];
+let fileName="merged.csv";
 let page=1;
 const pageSize=10;
 
@@ -112,14 +78,15 @@ async function mergeFiles(files,append=false){
 }
 
 render();
+workspace.hidden=true;
 $("#mergerBrowse").onclick=()=>$("#mergerFiles").click();
 $("#mergerFiles").onchange=event=>mergeFiles([...event.target.files],hasRealFiles);
 ["dragenter","dragover"].forEach(type=>dropzone.addEventListener(type,event=>{event.preventDefault();dropzone.classList.add("drag")}));
 ["dragleave","drop"].forEach(type=>dropzone.addEventListener(type,event=>{event.preventDefault();dropzone.classList.remove("drag")}));
 dropzone.addEventListener("drop",event=>mergeFiles([...event.dataTransfer.files]));
 
-const dark=localStorage.getItem("romitcsv.theme")==="dark";
+const dark=RomitCSV.getTheme()==="dark";
 document.body.classList.toggle("dark",dark);
 $("#mergerTheme").setAttribute("aria-pressed",String(dark));
-$("#mergerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#mergerTheme").setAttribute("aria-pressed",String(nextDark));localStorage.setItem("romitcsv.theme",nextDark?"dark":"light")};
+$("#mergerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#mergerTheme").setAttribute("aria-pressed",String(nextDark));RomitCSV.setTheme(nextDark?"dark":"light")};
 $("#mergerMenu").onclick=()=>$("#mergerNav").classList.toggle("open");

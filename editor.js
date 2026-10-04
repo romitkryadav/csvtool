@@ -4,43 +4,9 @@ function escapeHTML(value){
   return String(value??"").replace(/[&<>\"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));
 }
 
-function detectDelimiter(text){
-  const first=text.replace(/^\uFEFF/,"").split(/\r?\n/).find(line=>line.trim())||"";
-  return [",",";","\t","|"].map(delimiter=>[delimiter,first.split(delimiter).length-1]).sort((a,b)=>b[1]-a[1])[0][0];
-}
-
-function parseCSV(text){
-  text=String(text||"").replace(/^\uFEFF/,"");
-  const delimiter=detectDelimiter(text),rows=[],row=[],cell=[];
-  let quoted=false;
-  for(let i=0;i<text.length;i++){
-    const char=text[i],next=text[i+1];
-    if(char==='"'){
-      if(quoted&&next==='"'){cell.push('"');i++}
-      else quoted=!quoted;
-    }else if(char===delimiter&&!quoted){
-      row.push(cell.join(""));cell.length=0;
-    }else if((char==="\n"||char==="\r")&&!quoted){
-      if(char==="\r"&&next==="\n")i++;
-      row.push(cell.join(""));cell.length=0;
-      if(row.some(value=>value.trim()))rows.push(row.slice());
-      row.length=0;
-    }else cell.push(char);
-  }
-  if(cell.length||row.length){
-    row.push(cell.join(""));
-    if(row.some(value=>value.trim()))rows.push(row.slice());
-  }
-  const width=rows.reduce((max,current)=>Math.max(max,current.length),0);
-  return rows.map(current=>Array.from({length:width},(_,index)=>current[index]??""));
-}
-
-function serializeCSV(rows){
-  return rows.map(row=>row.map(value=>{
-    value=String(value??"");
-    return /[",\n\r]/.test(value)?'"'+value.replace(/"/g,'""')+'"':value;
-  }).join(",")).join("\r\n");
-}
+const detectDelimiter=(text)=>RomitCSV.detectDelimiter(text);
+const parseCSV=(text)=>RomitCSV.parseCSV(text).rows;
+const serializeCSV=(rows,delimiter=",")=>RomitCSV.serializeCSV(rows,delimiter);
 
 function downloadCSV(name,rows){
   const link=document.createElement("a");
@@ -53,17 +19,24 @@ function downloadCSV(name,rows){
 const uploadCard=$("#editorUploadCard");
 const dropzone=$("#editorDropzone");
 const workspace=$("#editorWorkspace");
-let rows=[
-  ["ID","Name","Email","Age","City"],
-  ["1","John Doe","john@example.com","28","New York"],
-  ["2","Jane Smith","jane@example.com","32","London"],
-  ["3","Mike Johnson","mike@example.com","24","Paris"],
-  ["4","Emily Brown","emily@example.com","29","Berlin"],
-  ["5","David Wilson","david@example.com","33","Tokyo"]
-];
-let fileName="sample_data.csv";
+let rows=[["Column 1"]];
+let fileName="data.csv";
 let page=1;
 const pageSize=25;
+const history=[];
+const future=[];
+function snapshot(){return JSON.stringify(rows);}
+function recordHistory(before){
+  if(before===snapshot()) return;
+  history.push(before);
+  if(history.length>50) history.shift();
+  future.length=0;
+}
+function restoreSnapshot(value){
+  rows=JSON.parse(value);
+  page=Math.min(page,Math.max(1,Math.ceil(Math.max(0,rows.length-1)/pageSize)));
+  render();
+}
 
 function render(){
   const headers=rows[0]||[];
@@ -81,7 +54,7 @@ function render(){
           <div><strong title="${escapeHTML(fileName)}">${escapeHTML(fileName)}</strong><span>${totalRows.toLocaleString()} rows · ${headers.length} columns</span></div>
         </div>
         <div class="editor-actions">
-          <button class="viewer-download" id="saveEditedCsv" type="button">Download CSV</button>
+          <button class="viewer-download" id="saveEditedCsv" type="button">Download CSV</button><button class="viewer-edit" id="undoEditor" type="button" ${history.length?"":"disabled"}>Undo</button><button class="viewer-edit" id="redoEditor" type="button" ${future.length?"":"disabled"}>Redo</button>
           <button class="viewer-edit" id="addEditorRow" type="button">Add row</button>
           <button class="viewer-edit" id="addEditorColumn" type="button">Add column</button>
           <button class="viewer-clear" id="clearEditor" type="button">Clear</button>
@@ -108,14 +81,24 @@ function render(){
     };
   });
   $("#saveEditedCsv").onclick=()=>downloadCSV(fileName,rows);
+  $("#undoEditor").onclick=()=>{
+    if(!history.length)return;
+    future.push(snapshot());
+    restoreSnapshot(history.pop());
+  };
+  $("#redoEditor").onclick=()=>{
+    if(!future.length)return;
+    history.push(snapshot());
+    restoreSnapshot(future.pop());
+  };
   $("#clearEditor").onclick=()=>{
     rows=[["Column 1"]];fileName="data.csv";page=1;
     workspace.hidden=true;uploadCard.hidden=false;$("#editorFile").value="";$("#editorStatus").textContent="";
   };
-  $("#addEditorRow").onclick=()=>{rows.push(Array(headers.length).fill(""));page=Math.max(1,Math.ceil((rows.length-1)/pageSize));render()};
-  $("#addEditorColumn").onclick=()=>{rows[0].push("Column "+(headers.length+1));rows.slice(1).forEach(row=>row.push(""));render()};
-  workspace.querySelectorAll(".delete-row").forEach(button=>button.onclick=()=>{rows.splice(Number(button.dataset.row),1);page=Math.min(page,Math.max(1,Math.ceil((rows.length-1)/pageSize)));render()});
-  workspace.querySelectorAll(".delete-column").forEach(button=>button.onclick=()=>{const column=Number(button.dataset.col);rows.forEach(row=>row.splice(column,1));render()});
+  $("#addEditorRow").onclick=()=>{const before=snapshot();rows.push(Array(headers.length).fill(""));recordHistory(before);page=Math.max(1,Math.ceil((rows.length-1)/pageSize));render()};
+  $("#addEditorColumn").onclick=()=>{const before=snapshot();rows[0].push("Column "+(headers.length+1));rows.slice(1).forEach(row=>row.push(""));recordHistory(before);render()};
+  workspace.querySelectorAll(".delete-row").forEach(button=>button.onclick=()=>{const before=snapshot();rows.splice(Number(button.dataset.row),1);recordHistory(before);page=Math.min(page,Math.max(1,Math.ceil((rows.length-1)/pageSize)));render()});
+  workspace.querySelectorAll(".delete-column").forEach(button=>button.onclick=()=>{const before=snapshot();const column=Number(button.dataset.col);rows.forEach(row=>row.splice(column,1));recordHistory(before);render()});
   $("#editorPrev").onclick=()=>{if(page>1){page--;render()}};
   $("#editorNext").onclick=()=>{if(page<totalPages){page++;render()}};
 }
@@ -163,13 +146,13 @@ dropzone.addEventListener("drop",async event=>{
   try{openText(await file.text(),file.name)}catch(error){$("#editorStatus").textContent="Could not read this CSV file."}
 });
 
-const dark=localStorage.getItem("romitcsv.theme")==="dark";
+const dark=RomitCSV.getTheme()==="dark";
 document.body.classList.toggle("dark",dark);
 $("#editorTheme").setAttribute("aria-pressed",String(dark));
 $("#editorTheme").onclick=()=>{
   const nextDark=!document.body.classList.contains("dark");
   document.body.classList.toggle("dark",nextDark);
   $("#editorTheme").setAttribute("aria-pressed",String(nextDark));
-  localStorage.setItem("romitcsv.theme",nextDark?"dark":"light");
+  RomitCSV.setTheme(nextDark?"dark":"light");
 };
 $("#editorMenu").onclick=()=>$("#editorNav").classList.toggle("open");

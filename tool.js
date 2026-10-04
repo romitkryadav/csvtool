@@ -10,44 +10,8 @@ function escapeHTML(v){
   return String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 }
 
-function detectDelimiter(text){
-  const first=text.replace(/^\uFEFF/,"").split(/\r?\n/).find(x=>x.trim())||"";
-  const choices=[",",";","\t","|"];
-  return choices.map(d=>[d,(first.split(d).length-1)]).sort((a,b)=>b[1]-a[1])[0][0];
-}
-
-function parse(text){
-  text=String(text||"").replace(/^\uFEFF/,"");
-  const d=detectDelimiter(text), rows=[], row=[], cell=[];
-  let inQuotes=false;
-  for(let i=0;i<text.length;i++){
-    const ch=text[i], next=text[i+1];
-    if(ch==='"'){
-      if(inQuotes&&next==='"'){cell.push('"');i++}
-      else inQuotes=!inQuotes;
-    }else if(ch===d&&!inQuotes){
-      row.push(cell.join(""));cell.length=0;
-    }else if((ch==="\n"||ch==="\r")&&!inQuotes){
-      if(ch==="\r"&&next==="\n")i++;
-      row.push(cell.join(""));cell.length=0;
-      if(row.some(v=>v.trim()!=="")) rows.push(row.slice());
-      row.length=0;
-    }else cell.push(ch);
-  }
-  if(cell.length||row.length){
-    row.push(cell.join(""));
-    if(row.some(v=>v.trim()!=="")) rows.push(row.slice());
-  }
-  const width=rows.reduce((m,r)=>Math.max(m,r.length),0);
-  return rows.map(r=>Array.from({length:width},(_,i)=>r[i]??""));
-}
-
-function csv(rows){
-  return rows.map(r=>r.map(v=>{
-    v=String(v??"");
-    return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;
-  }).join(",")).join("\r\n");
-}
+const parse=(text)=>RomitCSV.parseCSV(text).rows;
+const csv=(rows,delimiter=",")=>RomitCSV.serializeCSV(rows,delimiter);
 
 function dl(name,data,type){
   const a=document.createElement("a");
@@ -323,28 +287,30 @@ function viewer(){
       request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains("files"))request.result.createObjectStore("files")};
       request.onsuccess=()=>{
         const db=request.result;
-        if(!db.objectStoreNames.contains("files")){db.close();sample();return}
+        if(!db.objectStoreNames.contains("files")){db.close();return}
         const tx=db.transaction("files","readwrite");
         const store=tx.objectStore("files");
         const get=store.get("pendingCsv");
         get.onsuccess=()=>{
           const value=get.result;
-          if(value){
-            store.delete("pendingCsv");
-            const parsed=parse(value);
-            if(parsed.length){
-              rows=parsed;fileLabel="data.csv";fileBytes=0;page=1;pageSize=10;sortCol=-1;sortDir=1;
-              app.hidden=true;
-              showWorkspace();render();scrollToWorkspace();
-            }else sample();
-          }else sample();
+          if(!value){setStatus("");return}
+          store.delete("pendingCsv");
+          const finish=text=>{
+            const parsed=parse(text);
+            if(!parsed.length){setStatus("This CSV file is empty.",true);return}
+            rows=parsed;fileLabel=value?.name||"data.csv";fileBytes=value?.size||0;page=1;pageSize=10;sortCol=-1;sortDir=1;
+            app.hidden=true;
+            showWorkspace();render();scrollToWorkspace();
+          };
+          if(value instanceof Blob) value.text().then(finish).catch(()=>setStatus("Could not restore the selected file.",true));
+          else finish(String(value));
         };
-        get.onerror=()=>sample();
+        get.onerror=()=>setStatus("Could not restore the selected file. Please choose it again.",true);
         tx.oncomplete=()=>db.close();
       };
-      request.onerror=()=>sample();
+      request.onerror=()=>setStatus("Browser storage is unavailable. Please choose the file here.",true);
     }catch(error){
-      console.error(error);sample();
+      console.error(error);setStatus("Browser storage is unavailable. Please choose the file here.",true);
     }
   }
 
@@ -352,8 +318,9 @@ function viewer(){
 }
 
 function input(m=false){
-  app.innerHTML='<input id="f" type="file" accept=".csv,text/csv" '+(m?"multiple":"")+'> <button class="btn" id="go">Process</button><div id="s" class="tool-status"></div><div id="out"></div>';
+  app.innerHTML='<input id="f" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" '+(m?"multiple":"")+'> <button class="btn" id="go">Process</button><div id="s" class="tool-status"></div><div id="out"></div>';
 }
+function fileText(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(reader.error||new Error("File read failed"));reader.readAsText(file);})}
 function files(){
   return Promise.all([...$("#f").files].map(f=>new Promise(z=>{const r=new FileReader;r.onload=()=>z(parse(r.result));r.readAsText(f)})));
 }
@@ -379,8 +346,8 @@ function split(){
   };
 }
 function validate(){
-  input();$("#go").onclick=async()=>{const r=(await files())[0];if(!r?.length)return;const n=r[0].length,b=r.slice(1).filter(x=>x.length!==n).length;
-    $("#out").innerHTML='<p>'+Math.max(0,r.length-1)+' rows · '+n+' columns.</p><p>'+(b?b+" rows have inconsistent columns.":"CSV structure looks consistent.")+'</p>';
+  input();$("#go").onclick=async()=>{const textValue=await fileText($("#f").files[0]); const parsed=RomitCSV.parseCSV(textValue,{pad:false}).rows; if(!parsed.length)return; const n=parsed[0].length,b=parsed.slice(1).filter(x=>x.length!==n).length;
+    $("#out").innerHTML='<p>'+Math.max(0,parsed.length-1)+' rows · '+n+' columns.</p><p>'+(b?b+" rows have inconsistent columns.":"CSV structure looks consistent.")+'</p>';
   };
 }
 function cjson(){
@@ -404,11 +371,11 @@ if($("#desc"))$("#desc").textContent=n[1];
 ({viewer,cleaner:clean,merger:merge,splitter:split,validator:validate,csvjson:cjson,jsoncsv:jcsv})[kind]?.();
 if(kind==="sql")viewer();
 
-const savedTheme=localStorage.getItem("romitcsv.theme")==="dark"?"dark":"light";
+const savedTheme=RomitCSV.getTheme();
 document.body.classList.toggle("dark",savedTheme==="dark");
 $("#theme").onclick=()=>{
   const dark=!document.body.classList.contains("dark");
   document.body.classList.toggle("dark",dark);
-  localStorage.setItem("romitcsv.theme",dark?"dark":"light");
+  RomitCSV.setTheme(dark?"dark":"light");
 };
 $("#menu").onclick=()=>$("#nav").classList.toggle("open");
