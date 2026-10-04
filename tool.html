@@ -3,21 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Free online CSV Viewer by RomitCSV. Open, search, sort and inspect CSV files directly in your browser.">
-<title>CSV Viewer — RomitCSV</title>
+<meta name="description" content="Free online CSV Viewer. View, search, sort and inspect CSV files instantly in your browser.">
+<title>Free CSV Viewer — RomitCSV</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="site-header">
+<header class="site-header viewer-header">
   <a class="brand" href="index.html">
-    <span class="brand-mark small">CSV</span>
-    <span>Romit<span class="brand-accent">CSV</span></span>
+    <span class="brand-mark">CSV</span>
+    <span>CSV<span class="brand-accent">Tools</span></span>
   </a>
   <nav id="nav">
     <a href="index.html">Home</a>
-    <a href="index.html#tools">All Tools</a>
+    <a class="active" href="tool.html?tool=viewer">CSV Viewer</a>
+    <a href="tool.html?tool=editor">CSV Editor</a>
     <a href="index.html#converters">Converters</a>
+    <a href="index.html#tools">Utilities</a>
     <a href="index.html#resources">Resources</a>
+    <a href="index.html#about">About</a>
   </nav>
   <div class="header-actions">
     <button class="theme-switch" id="theme" type="button" aria-label="Toggle theme" aria-pressed="false">
@@ -27,18 +30,44 @@
   </div>
 </header>
 
-<main class="viewer-page">
+<main class="csv-viewer-page">
   <section class="viewer-hero">
-    <div class="viewer-kicker">ROMITCSV · CSV VIEWER</div>
-    <h1>Open and explore your CSV file.</h1>
-    <p>View large tables, search rows, sort columns and download your data — right in your browser.</p>
+    <div class="viewer-hero-inner">
+      <div class="viewer-copy">
+        <span class="viewer-pill">Free Online CSV Viewer</span>
+        <h1>View Your CSV Files<br><span>Instantly</span></h1>
+        <p>Open, preview and explore your CSV files in your browser.<br>Search, sort, and inspect your data — no software required.</p>
+        <div class="viewer-trust">
+          <span><b class="trust-icon green">✓</b><strong>100% Free</strong></span>
+          <span><b class="trust-icon blue">⌕</b><strong>No Signup</strong></span>
+          <span><b class="trust-icon purple">ϟ</b><strong>Works in Browser</strong></span>
+        </div>
+      </div>
+      <div class="viewer-upload-card" id="app"></div>
+    </div>
   </section>
 
-  <section class="viewer-shell" id="app"></section>
+  <section class="viewer-content">
+    <div class="viewer-workspace" id="workspace"></div>
 
-  <section class="viewer-note">
-    <strong>Your data stays in your browser.</strong>
-    <span>RomitCSV does not upload your CSV to a server for viewing.</span>
+    <div class="viewer-benefits">
+      <div class="benefit">
+        <span class="benefit-icon blue"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.5"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+        <div><strong>Easy to Use</strong><p>Just drag and drop your file or click to browse. View your data instantly.</p></div>
+      </div>
+      <div class="benefit">
+        <span class="benefit-icon purple"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 20 6v5c0 5.2-3.4 8.7-8 10-4.6-1.3-8-4.8-8-10V6l8-3Z" stroke="currentColor" stroke-width="2.2"/><path d="m9 12 2 2 4-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div><strong>Works Offline</strong><p>Your files stay in your browser. Nothing is uploaded to our servers.</p></div>
+      </div>
+      <div class="benefit">
+        <span class="benefit-icon violet"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2.2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="15" r="1" fill="currentColor"/></svg></span>
+        <div><strong>Supports Multiple Formats</strong><p>Open CSV and TSV files with full data preview and search.</p></div>
+      </div>
+      <div class="benefit">
+        <span class="benefit-icon orange">ϟ</span>
+        <div><strong>Perfect for Large Files</strong><p>Handles big CSV files smoothly with fast loading and pagination.</p></div>
+      </div>
+    </div>
   </section>
 </main>
 
