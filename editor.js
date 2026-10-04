@@ -75,9 +75,13 @@ function render(){
   workspace.querySelectorAll(".csv-cell").forEach(input=>{
     const resize=()=>{input.style.height="auto";input.style.height=input.scrollHeight+"px"};
     resize();
+    input.onfocus=()=>{input.dataset.before=snapshot()};
     input.oninput=()=>{
       rows[Number(input.dataset.row)][Number(input.dataset.col)]=input.value;
       resize();
+    };
+    input.onblur=()=>{
+      if(input.dataset.before) recordHistory(input.dataset.before);
     };
   });
   $("#saveEditedCsv").onclick=()=>downloadCSV(fileName,rows);
