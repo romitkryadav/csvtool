@@ -1,30 +1,148 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>RomitCSV — Free Online CSV Tools</title>
-<meta name="description" content="RomitCSV provides free online CSV tools to view, clean, convert, merge, split and manage CSV files in your browser.">
+<meta name="description" content="Free online CSV tools to view, edit, clean, merge, split and convert CSV files directly in your browser.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="header"><a class="brand" href="/">Romit<span>CSV</span></a><nav><a href="#tools">CSV Tools</a><a href="#converters">Converters</a><a href="#resources">Resources</a></nav><button class="theme" id="themeBtn" aria-label="Toggle dark mode">◐</button><button class="menu" id="menuBtn">Menu</button></header>
+<header class="site-header">
+  <a class="brand" href="index.html" aria-label="RomitCSV home">
+    <span class="brand-mark" aria-hidden="true"><span>CSV</span></span>
+    <span>Romit<span class="brand-accent">CSV</span></span>
+  </a>
+  <nav id="mainNav" aria-label="Main navigation">
+    <a class="active" href="index.html">Home</a>
+    <a href="#tools">All Tools</a>
+    <a href="#converters">Converters</a>
+    <a href="#resources">Resources</a>
+    <a href="#about">About</a>
+  </nav>
+  <div class="header-actions">
+    <button class="theme-switch" id="themeBtn" aria-label="Toggle theme"><span>☼</span><i></i><b>☾</b></button>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu">Menu</button>
+  </div>
+</header>
+
 <main>
-<section class="hero"><div class="hero-inner"><div class="pill">FREE ONLINE CSV TOOLS</div><h1>Simple CSV tools,<br><em>built for data.</em></h1><p>View, clean, convert, merge and manage CSV files directly in your browser.</p>
-<div class="dropzone" id="dropzone"><div class="upload-icon">↑</div><strong>Drop your CSV file here</strong><span>or <button id="browseBtn">Browse files</button></span><small>CSV files up to 10 MB · Processed locally in your browser</small><input id="fileInput" type="file" accept=".csv,text/csv" hidden></div>
-</div></section>
-<section class="section" id="tools"><div class="section-top"><div><label>POPULAR CSV TOOLS</label><h2>Start with the tool you need.</h2></div><a href="#all-tools">View all tools →</a></div><div class="popular-grid">
-<a class="tool-card" href="#" data-tool="viewer"><div class="tool-icon">▦</div><h3>CSV Viewer</h3><p>Open and inspect CSV data in a clean table.</p><b>Open tool →</b></a>
-<a class="tool-card" href="#" data-tool="cleaner"><div class="tool-icon">✧</div><h3>CSV Cleaner</h3><p>Remove empty rows, columns and unwanted data.</p><b>Open tool →</b></a>
-<a class="tool-card" href="#" data-tool="merger"><div class="tool-icon">＋</div><h3>CSV Merger</h3><p>Combine multiple CSV files into one file.</p><b>Open tool →</b></a>
-<a class="tool-card" href="#" data-tool="splitter"><div class="tool-icon">⌁</div><h3>CSV Splitter</h3><p>Split a large CSV into smaller files.</p><b>Open tool →</b></a>
-<a class="tool-card" href="#" data-tool="validator"><div class="tool-icon">✓</div><h3>CSV Validator</h3><p>Check CSV structure and find formatting issues.</p><b>Open tool →</b></a>
-<a class="tool-card" href="#" data-tool="json"><div class="tool-icon">{ }</div><h3>CSV → JSON</h3><p>Convert CSV rows into JSON data instantly.</p><b>Open tool →</b></a>
-</div></section>
-<section class="all-tools section" id="all-tools"><div class="section-top"><div><label>ALL CSV TOOLS</label><h2>A complete CSV toolbox.</h2></div></div><div class="tool-columns"><div><h3>View & Edit</h3><a href="#">CSV Viewer</a><a href="#">CSV Editor</a><a href="#">CSV Table</a><a href="#">CSV Formatter</a></div><div id="converters"><h3>Convert</h3><a href="#">CSV to JSON</a><a href="#">JSON to CSV</a><a href="#">CSV to SQL</a><a href="#">CSV to Excel</a></div><div><h3>Clean & Manage</h3><a href="#">Remove Duplicates</a><a href="#">CSV Cleaner</a><a href="#">CSV Validator</a><a href="#">CSV Sorter</a></div></div></section>
-<section class="benefits section"><div class="benefit"><strong>Fast</strong><span>No waiting for uploads.</span></div><div class="benefit"><strong>Private</strong><span>Your data stays on your device.</span></div><div class="benefit"><strong>No signup</strong><span>Start using tools instantly.</span></div><div class="benefit"><strong>Free</strong><span>Core CSV tools at no cost.</span></div></section>
-<section class="seo section" id="resources"><label>WORK WITH CSV FILES EASILY</label><h2>Useful CSV tools without complicated software.</h2><p>CSV files are one of the simplest ways to store and exchange tabular data. They are commonly used for spreadsheets, exports, databases, analytics and moving information between different applications. RomitCSV gives you focused browser-based utilities for everyday CSV tasks.</p><p>Whether you need to inspect a file, remove duplicate rows, merge datasets, split a large file or convert CSV to another format, the goal is simple: get the job done without installing desktop software or creating an account.</p></section>
-<section class="faq section"><label>FAQ</label><h2>Common questions.</h2><details><summary>What is a CSV file?</summary><p>A CSV file stores tabular data as plain text, with values separated by commas or another delimiter.</p></details><details><summary>How do I open a CSV file?</summary><p>Choose a CSV file above to preview its rows and columns directly in your browser.</p></details><details><summary>Can I convert CSV to JSON?</summary><p>Yes. RomitCSV includes CSV to JSON conversion for turning tabular rows into JSON data.</p></details><details><summary>Are uploaded CSV files stored?</summary><p>The browser-based tools are designed to process supported files locally on your device.</p></details></section>
-<section class="cta"><h2>Work with CSV files<br>without the hassle.</h2><button class="btn" id="ctaBtn">Choose a CSV file</button></section>
-</main><footer><div><a class="brand" href="/">Romit<span>CSV</span></a><p>Simple browser-based tools for working with CSV files.</p></div><div><h4>Tools</h4><a href="#tools">CSV Viewer</a><a href="#all-tools">CSV Cleaner</a><a href="#all-tools">CSV Merger</a></div><div><h4>Company</h4><a href="#">About</a><a href="#">Privacy</a><a href="#">Contact</a></div><div><h4>Resources</h4><a href="#resources">CSV Guide</a><a href="#resources">FAQ</a></div></footer>
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <div class="trust-pill"><span>100% Free</span><i>•</i><span>No Signup</span><i>•</i><span>Works in Your Browser</span></div>
+      <h1>Free Online <span>CSV</span> Tools</h1>
+      <p>View, clean, convert, merge and manage CSV files<br class="desktop"> in your browser. Fast, secure and easy to use.</p>
+
+      <div class="dropzone" id="dropzone">
+        <div class="upload-cloud" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none"><path d="M14 37h22a8 8 0 0 0 1-15.94A12 12 0 0 0 14.64 18 9.5 9.5 0 0 0 14 37Z" stroke="currentColor" stroke-width="2.7" stroke-linecap="round"/><path d="M24 31V16m0 0-6 6m6-6 6 6" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <strong>Drag &amp; drop your CSV file here</strong>
+        <span>or <button id="browseBtn" type="button">Browse CSV File</button></span>
+        <small>Supports CSV, TSV &nbsp;•&nbsp; Max file size: 50MB</small>
+        <input id="fileInput" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" hidden>
+        <div id="fileStatus" class="file-status" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <div class="art-circle circle-one"></div>
+      <div class="art-circle circle-two"></div>
+      <div class="browser-card">
+        <div class="window-bar"><i></i><i></i><i></i></div>
+        <div class="sheet">
+          <div class="sheet-row sheet-head"><span>Name</span><span>Email</span><span>Age</span><span>City</span></div>
+          <div class="sheet-row"><span>John Doe</span><span>john@ace.com</span><span>28</span><span>New York</span></div>
+          <div class="sheet-row"><span>Jane Smith</span><span>jane@ace.com</span><span>32</span><span>London</span></div>
+          <div class="sheet-row"><span>Mike Johnson</span><span>mike@ace.com</span><span>24</span><span>Paris</span></div>
+          <div class="sheet-row"><span>Emily Brown</span><span>emily@ace.com</span><span>29</span><span>Berlin</span></div>
+        </div>
+      </div>
+      <div class="csv-badge"><span>CSV</span></div>
+      <div class="art-arrow">Your data, in your control <b>↗</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="tools-section section" id="tools">
+  <div class="section-heading">
+    <div><label>POPULAR CSV TOOLS</label><h2>Everything you need to work with CSV files, all in one place.</h2></div>
+    <a href="#all-tools">View all tools <b>→</b></a>
+  </div>
+  <div class="tools-grid">
+    <a class="tool-card card-green" href="tool.html?tool=viewer"><span class="tool-icon">◉</span><h3>CSV Viewer</h3><p>Open and view CSV files with search, sort and filter.</p><b>→</b></a>
+    <a class="tool-card card-blue" href="tool.html?tool=viewer"><span class="tool-icon">✎</span><h3>CSV Editor</h3><p>Edit your CSV data easily and download.</p><b>→</b></a>
+    <a class="tool-card card-purple" href="tool.html?tool=cleaner"><span class="tool-icon">✦</span><h3>CSV Cleaner</h3><p>Remove duplicates, fix errors and clean your data.</p><b>→</b></a>
+    <a class="tool-card card-orange" href="tool.html?tool=merger"><span class="tool-icon">⊞</span><h3>CSV Merger</h3><p>Combine multiple CSV files into one.</p><b>→</b></a>
+    <a class="tool-card card-cyan" href="tool.html?tool=splitter"><span class="tool-icon">⌘</span><h3>CSV Splitter</h3><p>Split large CSV files into smaller parts.</p><b>→</b></a>
+    <a class="tool-card card-red" href="tool.html?tool=validator"><span class="tool-icon">✓</span><h3>CSV Validator</h3><p>Check for errors and validate your CSV structure.</p><b>→</b></a>
+    <a class="tool-card card-violet" href="tool.html?tool=csvjson"><span class="tool-icon">{ }</span><h3>CSV → JSON</h3><p>Convert CSV to JSON format.</p><b>→</b></a>
+    <a class="tool-card card-teal" href="tool.html?tool=jsoncsv"><span class="tool-icon">{ }</span><h3>JSON → CSV</h3><p>Convert JSON to CSV format.</p><b>→</b></a>
+    <a class="tool-card card-green" href="tool.html?tool=viewer"><span class="tool-icon">▣</span><h3>CSV → Excel</h3><p>Convert CSV data to Excel-ready format.</p><b>→</b></a>
+    <a class="tool-card card-blue" href="tool.html?tool=viewer"><span class="tool-icon">▤</span><h3>Excel → CSV</h3><p>Convert Excel files to CSV format.</p><b>→</b></a>
+  </div>
+</section>
+
+<section class="info-section" id="about">
+  <div class="info-grid">
+    <div class="why">
+      <label>WHY USE OUR CSV TOOLS?</label>
+      <div class="feature-list">
+        <div class="feature"><span class="feature-icon green">ϟ</span><div><strong>Fast &amp; Reliable</strong><p>Process your files in seconds, not minutes.</p></div></div>
+        <div class="feature"><span class="feature-icon blue">♙</span><div><strong>100% Private</strong><p>Your files never leave your browser.</p></div></div>
+        <div class="feature"><span class="feature-icon purple">♧</span><div><strong>No Signup Required</strong><p>Just upload and get started.</p></div></div>
+        <div class="feature"><span class="feature-icon pink">♡</span><div><strong>Completely Free</strong><p>All core tools are free to use, forever.</p></div></div>
+      </div>
+    </div>
+    <div class="how">
+      <label>HOW IT WORKS</label>
+      <div class="steps">
+        <div class="step"><span>1</span><div><strong>Upload</strong><p>Drag &amp; drop your CSV file or click to browse.</p></div></div>
+        <div class="step"><span>2</span><div><strong>Process</strong><p>Our tool works on your file instantly.</p></div></div>
+        <div class="step"><span>3</span><div><strong>Download</strong><p>Get your result file, ready to use.</p></div></div>
+      </div>
+      <div class="thats-it">That's it!</div>
+    </div>
+    <aside class="csv-info" id="resources">
+      <div class="info-file-icon">▤</div>
+      <h3>What is a CSV File?</h3>
+      <p>A CSV (Comma-Separated Values) file is a simple text file that stores data in a tabular format. It's widely used to exchange data between applications, databases and spreadsheets.</p>
+      <a href="#faq">Learn more about CSV <b>→</b></a>
+    </aside>
+  </div>
+</section>
+
+<section class="all-tools section" id="all-tools">
+  <div class="section-heading"><div><label>ALL CSV TOOLS</label><h2>A complete CSV toolbox.</h2></div></div>
+  <div class="tool-links" id="converters">
+    <div><h3>View &amp; Edit</h3><a href="tool.html?tool=viewer">CSV Viewer</a><a href="tool.html?tool=viewer">CSV Editor</a><a href="tool.html?tool=viewer">CSV Table</a><a href="tool.html?tool=viewer">CSV Formatter</a></div>
+    <div><h3>Convert</h3><a href="tool.html?tool=csvjson">CSV to JSON</a><a href="tool.html?tool=jsoncsv">JSON to CSV</a><a href="tool.html?tool=sql">CSV to SQL</a><a href="tool.html?tool=viewer">CSV to Excel</a></div>
+    <div><h3>Clean &amp; Manage</h3><a href="tool.html?tool=cleaner">Remove Duplicates</a><a href="tool.html?tool=cleaner">CSV Cleaner</a><a href="tool.html?tool=validator">CSV Validator</a><a href="tool.html?tool=viewer">CSV Sorter</a></div>
+  </div>
+</section>
+
+<section class="faq section" id="faq">
+  <label>FAQ</label><h2>Common questions.</h2>
+  <details><summary>What is a CSV file?</summary><p>A CSV file stores tabular data as plain text, with values separated by commas or another delimiter.</p></details>
+  <details><summary>How do I open a CSV file?</summary><p>Choose a CSV file above to preview its rows and columns directly in your browser.</p></details>
+  <details><summary>Can I convert CSV to JSON?</summary><p>Yes. RomitCSV includes a CSV to JSON converter for turning tabular rows into JSON data.</p></details>
+  <details><summary>Are uploaded CSV files stored?</summary><p>Supported browser-based tools process files locally on your device.</p></details>
+</section>
+
+<section class="cta">
+  <h2>Work with CSV files<br>without the hassle.</h2>
+  <button class="primary-btn" id="ctaBtn">Choose a CSV file</button>
+</section>
+</main>
+
+<footer>
+  <div class="footer-brand"><a class="brand" href="index.html"><span class="brand-mark small"><span>CSV</span></span><span>Romit<span class="brand-accent">CSV</span></span></a><p>Simple browser-based tools for working with CSV files.</p></div>
+  <div><h4>Tools</h4><a href="tool.html?tool=viewer">CSV Viewer</a><a href="tool.html?tool=cleaner">CSV Cleaner</a><a href="tool.html?tool=merger">CSV Merger</a></div>
+  <div><h4>Company</h4><a href="#about">About</a><a href="#">Privacy</a><a href="#">Contact</a></div>
+  <div><h4>Resources</h4><a href="#resources">CSV Guide</a><a href="#faq">FAQ</a></div>
+  <div class="copyright">© 2026 RomitCSV. All rights reserved.</div>
+</footer>
 <script src="script.js"></script>
-</body></html>
+</body>
+</html>
