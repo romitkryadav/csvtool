@@ -55,41 +55,20 @@ function dl(name,data,type){
 
 function viewer(){
   app.innerHTML=`
-    <div class="viewer-upload" id="viewerUpload">
+    <div class="viewer-upload-inner" id="viewerUpload">
       <div class="viewer-upload-icon" aria-hidden="true">
         <svg viewBox="0 0 48 48" fill="none"><path d="M24 31V8m0 0-8 8m8-8 8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 27v10a4 4 0 0 0 4 4h18a4 4 0 0 0 4-4V27" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
       </div>
-      <strong>Drop your CSV file here</strong>
-      <span>or choose a file from your computer</span>
+      <strong>Drag &amp; drop your CSV file here</strong>
+      <span>or</span>
       <input id="f" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" hidden>
-      <button class="viewer-primary" id="go" type="button">Browse CSV</button>
-      <small>CSV or TSV · up to 50 MB · processed locally</small>
+      <button class="viewer-primary" id="go" type="button"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H14l6 6v7.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z" stroke="currentColor" stroke-width="1.8"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8"/><path d="M8 15h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Browse CSV File</button>
+      <small>Supports CSV, TSV &nbsp;•&nbsp; Max file size: 50MB</small>
       <div id="s" class="tool-status" role="status"></div>
-    </div>
-    <div id="viewerWorkspace" hidden>
-      <div class="viewer-filebar">
-        <div class="viewer-fileinfo">
-          <div class="viewer-fileicon">CSV</div>
-          <div><strong id="fileName">data.csv</strong><span id="fileMeta"></span></div>
-        </div>
-        <button class="viewer-secondary" id="newFile" type="button">Open another</button>
-      </div>
-      <div class="viewer-toolbar">
-        <div class="viewer-search">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <input id="search" placeholder="Search rows..." autocomplete="off">
-          <kbd>/</kbd>
-        </div>
-        <div class="viewer-actions">
-          <select id="pageSize" aria-label="Rows per page"><option value="50">50 rows</option><option value="100" selected>100 rows</option><option value="250">250 rows</option></select>
-          <button class="viewer-secondary" id="download" type="button">Download CSV</button>
-        </div>
-      </div>
-      <div class="viewer-stats" id="stats"></div>
-      <div id="out"></div>
     </div>`;
 
-  let rows=[], filtered=[], page=1, pageSize=100, sortCol=-1, sortDir=1, fileLabel="data.csv";
+  const workspace=$("#workspace");
+  let rows=[], filtered=[], page=1, pageSize=10, sortCol=-1, sortDir=1, fileLabel="sample_data.csv";
 
   function formatBytes(bytes){
     if(!bytes)return "0 B";
@@ -97,9 +76,13 @@ function viewer(){
     return (bytes/Math.pow(1024,i)).toFixed(i?1:0)+" "+units[i];
   }
 
+  function showWorkspace(){
+    workspace.hidden=false;
+    workspace.classList.add("visible");
+  }
+
   function render(){
-    const out=$("#out"), controls=$("#viewerWorkspace");
-    if(!rows.length){controls.hidden=true;return}
+    if(!rows.length){workspace.innerHTML="";workspace.hidden=true;return}
     const q=($("#search")?.value||"").trim().toLowerCase();
     filtered=rows.slice(1).map((r,i)=>({r,index:i+1})).filter(x=>!q||x.r.some(v=>String(v).toLowerCase().includes(q)));
     if(sortCol>=0){
@@ -109,70 +92,82 @@ function viewer(){
     page=Math.min(page,pages);
     const start=(page-1)*pageSize;
     const visible=filtered.slice(start,start+pageSize);
-    $("#stats").textContent=`${filtered.length.toLocaleString()} matching rows · ${Math.max(0,rows.length-1).toLocaleString()} total rows · ${rows[0]?.length||0} columns`;
-    let html='<div class="viewer-table-wrap"><table><thead><tr>';
-    html+=rows[0].map((h,i)=>'<th><button class="th-sort" data-col="'+i+'">'+escapeHTML(h||("Column "+(i+1)))+(sortCol===i?(sortDir===1?" ↑":" ↓"):"")+'</button></th>').join("");
-    html+='</tr></thead><tbody>';
-    if(visible.length){
-      html+=visible.map(x=>'<tr><td class="row-number">'+x.index+'</td>'+x.r.map(v=>'<td>'+escapeHTML(v)+'</td>').join("")+'</tr>').join("");
-    }else{
-      html+='<tr><td colspan="'+(rows[0].length+1)+'" class="no-results">No matching rows found.</td></tr>';
-    }
-    html+='</tbody></table></div>';
-    html+=`<div class="viewer-pager"><span>Showing ${visible.length?start+1:0}–${Math.min(start+visible.length,filtered.length)} of ${filtered.length.toLocaleString()}</span><div><button class="viewer-page-btn" id="prev" ${page<=1?"disabled":""}>← Previous</button><span>Page ${page} / ${pages}</span><button class="viewer-page-btn" id="next" ${page>=pages?"disabled":""}>Next →</button></div></div>`;
-    out.innerHTML=html;
-
+    workspace.innerHTML=`
+      <div class="viewer-data-card">
+        <div class="viewer-filebar">
+          <div class="viewer-fileinfo">
+            <div class="viewer-fileicon"><span>CSV</span></div>
+            <div><strong>${escapeHTML(fileLabel)}</strong><span>${formatBytes(rows._size||0)} &nbsp;•&nbsp; ${Math.max(0,rows.length-1).toLocaleString()} rows &nbsp;•&nbsp; ${rows[0]?.length||0} columns</span></div>
+          </div>
+          <div class="viewer-file-actions">
+            <button class="viewer-download" id="download" type="button"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV <span>⌄</span></button>
+            <button class="viewer-edit" id="edit" type="button"><svg viewBox="0 0 24 24" fill="none"><path d="m14.5 6.5 3 3M5 19l3.2-.7L18.5 8a2.1 2.1 0 0 0-3-3L5.2 15.3 5 19Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Edit</button>
+            <button class="viewer-clear" id="clear" type="button"><svg viewBox="0 0 24 24" fill="none"><path d="M6 7h12m-9 0V4h6v3m-7 0 1 13h6l1-13M10 10v4m4-4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Clear</button>
+          </div>
+        </div>
+        <div class="viewer-table-tools">
+          <div class="viewer-search">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input id="search" placeholder="Search in table..." autocomplete="off">
+          </div>
+          <div class="viewer-selects">
+            <label>Rows per page <select id="pageSize"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
+            <label>Sort by <select id="sortSelect"><option value="-1">None</option>${rows[0].map((h,i)=>'<option value="'+i+'">'+escapeHTML(h||("Column "+(i+1)))+'</option>').join("")}</select></label>
+          </div>
+        </div>
+        <div class="viewer-table-wrap"><table><thead><tr><th class="row-num-head">#</th>${rows[0].map((h,i)=>'<th>'+escapeHTML(h||("Column "+(i+1)))+'<button class="th-sort" data-col="'+i+'">↕</button></th>').join("")}</tr></thead><tbody>${visible.length?visible.map(x=>'<tr><td class="row-number">'+x.index+'</td>'+x.r.map(v=>'<td>'+escapeHTML(v)+'</td>').join("")+'</tr>').join(""):'<tr><td colspan="'+(rows[0].length+1)+'" class="no-results">No matching rows found.</td></tr>'}</tbody></table></div>
+        <div class="viewer-pager"><span>Showing ${visible.length?start+1:0} to ${Math.min(start+visible.length,filtered.length)} of ${filtered.length.toLocaleString()} rows</span><div class="pager-buttons"><button id="prev" ${page<=1?"disabled":""}>‹</button><b>${page}</b><button id="next" ${page>=pages?"disabled":""}>›</button></div></div>
+      </div>`;
+    $("#pageSize").value=String(pageSize);
+    $("#sortSelect").value=String(sortCol);
     $("#search").oninput=()=>{page=1;render()};
     $("#pageSize").onchange=e=>{pageSize=+e.target.value;page=1;render()};
+    $("#sortSelect").onchange=e=>{sortCol=+e.target.value;sortDir=1;page=1;render()};
     $("#download").onclick=()=>dl(fileLabel.replace(/\.(csv|tsv)$/i,"")+".csv",csv(rows),"text/csv");
+    $("#edit").onclick=()=>{location.href="tool.html?tool=editor"};
+    $("#clear").onclick=()=>{rows=[];workspace.classList.remove("visible");workspace.hidden=true};
     $("#prev").onclick=()=>{if(page>1){page--;render()}};
     $("#next").onclick=()=>{if(page<pages){page++;render()}};
-    document.querySelectorAll(".th-sort").forEach(b=>b.onclick=()=>{
-      const col=+b.dataset.col;
-      if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1}
-      page=1;render();
-    });
+    document.querySelectorAll(".th-sort").forEach(b=>b.onclick=()=>{const col=+b.dataset.col;if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1}page=1;render()});
   }
 
   async function openFile(file){
     if(!file){$("#s").textContent="Choose a CSV file first.";return}
-    if(file.size>50*1024*1024){$("#s").textContent="This file is larger than 50 MB.";return}
+    if(file.size>50*1024*1024){$("#s").textContent="This file is larger than 50MB.";return}
     $("#s").textContent="Reading your CSV…";
     try{
-      const text=await file.text();
-      const parsed=parse(text);
+      const text=await file.text(),parsed=parse(text);
       if(!parsed.length){$("#s").textContent="This CSV file is empty.";return}
-      rows=parsed;fileLabel=file.name||"data.csv";page=1;sortCol=-1;sortDir=1;
-      $("#viewerUpload").hidden=true;
-      $("#viewerWorkspace").hidden=false;
-      $("#fileName").textContent=fileLabel;
-      $("#fileMeta").textContent=`${formatBytes(file.size)} · ${Math.max(0,rows.length-1).toLocaleString()} rows · ${rows[0].length} columns`;
+      parsed._size=file.size;
+      rows=parsed;fileLabel=file.name||"data.csv";page=1;pageSize=10;sortCol=-1;sortDir=1;
       $("#s").textContent="";
-      render();
-      setTimeout(()=>$("#search")?.focus(),50);
+      showWorkspace();render();
     }catch(e){$("#s").textContent="Could not read this CSV file."}
   }
 
   $("#go").onclick=()=>$("#f").click();
   $("#f").onchange=()=>openFile($("#f").files[0]);
-  $("#newFile").onclick=()=>{
-    $("#viewerWorkspace").hidden=true;
-    $("#viewerUpload").hidden=false;
-    $("#f").value="";
-    $("#s").textContent="";
-    rows=[];filtered=[];
-  };
+  const upload=$("#viewerUpload")||app;
+  ["dragenter","dragover"].forEach(type=>upload.addEventListener(type,e=>{e.preventDefault();app.classList.add("drag")}));
+  ["dragleave","drop"].forEach(type=>upload.addEventListener(type,e=>{e.preventDefault();app.classList.remove("drag")}));
+  app.addEventListener("drop",e=>openFile(e.dataTransfer.files[0]));
 
-  const upload=$("#viewerUpload");
-  ["dragenter","dragover"].forEach(type=>upload.addEventListener(type,e=>{e.preventDefault();upload.classList.add("drag")}));
-  ["dragleave","drop"].forEach(type=>upload.addEventListener(type,e=>{e.preventDefault();upload.classList.remove("drag")}));
-  upload.addEventListener("drop",e=>openFile(e.dataTransfer.files[0]));
-
-  document.addEventListener("keydown",e=>{
-    if(e.key==="/"&&document.activeElement?.tagName!=="INPUT"&&document.activeElement?.tagName!=="TEXTAREA"){
-      e.preventDefault();$("#search")?.focus();
-    }
-  });
+  function sample(){
+    rows=[
+      ["ID","Name","Email","Age","City"],
+      ["1","John Doe","john@example.com","28","New York"],
+      ["2","Jane Smith","jane@example.com","32","London"],
+      ["3","Mike Johnson","mike@example.com","24","Paris"],
+      ["4","Emily Brown","emily@example.com","29","Berlin"],
+      ["5","David Wilson","david@example.com","33","Tokyo"],
+      ["6","Sarah Miller","sarah@example.com","27","Sydney"],
+      ["7","James Taylor","james@example.com","41","Toronto"],
+      ["8","Olivia Anderson","olivia@example.com","35","Singapore"],
+      ["9","Daniel Thomas","daniel@example.com","22","Mumbai"],
+      ["10","Sophia Jackson","sophia@example.com","26","Madrid"]
+    ];
+    rows._size=12.4*1024;fileLabel="sample_data.csv";page=1;pageSize=10;sortCol=-1;showWorkspace();render();
+  }
 
   function loadPending(){
     return new Promise(resolve=>{
@@ -185,22 +180,15 @@ function viewer(){
             const value=get.result;
             if(value){
               store.delete("pendingCsv");
-              rows=parse(value);
-              if(rows.length){
-                fileLabel="data.csv";
-                $("#viewerUpload").hidden=true;
-                $("#viewerWorkspace").hidden=false;
-                $("#fileName").textContent="data.csv";
-                $("#fileMeta").textContent=`${Math.max(0,rows.length-1).toLocaleString()} rows · ${rows[0].length} columns`;
-                render();
-              }
-            }
+              const parsed=parse(value);
+              if(parsed.length){rows=parsed;rows._size=0;fileLabel="data.csv";page=1;pageSize=10;showWorkspace();render()}
+            }else sample();
             db.close();resolve();
           };
-          get.onerror=()=>{db.close();resolve()};
+          get.onerror=()=>{db.close();sample();resolve()};
         };
-        request.onerror=()=>resolve();
-      }catch(e){resolve()}
+        request.onerror=()=>{sample();resolve()};
+      }catch(e){sample();resolve()}
     });
   }
   loadPending();
