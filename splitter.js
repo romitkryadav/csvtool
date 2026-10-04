@@ -4,9 +4,40 @@ function escapeHTML(value){
   return String(value??"").replace(/[&<>\"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));
 }
 
-const detectDelimiter=(text)=>RomitCSV.detectDelimiter(text);
-const parseCSV=(text)=>RomitCSV.parseCSV(text).rows;
-const serializeCSV=(rows,delimiter=",")=>RomitCSV.serializeCSV(rows,delimiter);
+function detectDelimiter(text){
+  const first=text.replace(/^\uFEFF/,"").split(/\r?\n/).find(line=>line.trim())||"";
+  return [",",";","\t","|"].map(delimiter=>[delimiter,first.split(delimiter).length-1]).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function parseCSV(text){
+  text=String(text||"").replace(/^\uFEFF/,"");
+  const delimiter=detectDelimiter(text),rows=[],row=[],cell=[];
+  let quoted=false;
+  for(let i=0;i<text.length;i++){
+    const char=text[i],next=text[i+1];
+    if(char==='"'){
+      if(quoted&&next==='"'){cell.push('"');i++}
+      else quoted=!quoted;
+    }else if(char===delimiter&&!quoted){
+      row.push(cell.join(""));cell.length=0;
+    }else if((char==="\n"||char==="\r")&&!quoted){
+      if(char==="\r"&&next==="\n")i++;
+      row.push(cell.join(""));cell.length=0;
+      if(row.length)rows.push(row.slice());
+      row.length=0;
+    }else cell.push(char);
+  }
+  if(cell.length||row.length){row.push(cell.join(""));rows.push(row.slice())}
+  const width=rows.reduce((max,current)=>Math.max(max,current.length),0);
+  return rows.map(current=>Array.from({length:width},(_,index)=>current[index]??""));
+}
+
+function serializeCSV(rows){
+  return rows.map(row=>row.map(value=>{
+    value=String(value??"");
+    return /[",\n\r]/.test(value)?'"'+value.replace(/"/g,'""')+'"':value;
+  }).join(",")).join("\r\n");
+}
 
 function makeParts(rows,rowLimit,repeatHeader){
   const header=rows[0]||[];
@@ -23,8 +54,22 @@ function makeParts(rows,rowLimit,repeatHeader){
 const uploadCard=$("#splitterUploadCard");
 const dropzone=$("#splitterDropzone");
 const workspace=$("#splitterWorkspace");
-let rows=[];
-let fileName="data.csv";
+let rows=[
+  ["ID","Name","Email"],
+  ["1","Ada Lovelace","ada@example.com"],
+  ["2","Grace Hopper","grace@example.com"],
+  ["3","Alan Turing","alan@example.com"],
+  ["4","Katherine Johnson","kj@example.com"],
+  ["5","Edsger Dijkstra","ed@example.com"],
+  ["6","Barbara Liskov","barbara@example.com"],
+  ["7","Donald Knuth","donald@example.com"],
+  ["8","Margaret Hamilton","margaret@example.com"],
+  ["9","Tim Berners-Lee","tim@example.com"],
+  ["10","Frances Allen","frances@example.com"],
+  ["11","Mary Jackson","mary@example.com"],
+  ["12","John Backus","john@example.com"]
+];
+let fileName="sample_data.csv";
 let rowLimit=5;
 let repeatHeader=true;
 let parts=makeParts(rows,rowLimit,repeatHeader);
@@ -83,7 +128,6 @@ function openText(text,name){
 }
 
 render();
-workspace.hidden=true;
 $("#splitterBrowse").onclick=()=>$("#splitterFile").click();
 $("#splitterFile").onchange=async event=>{
   const file=event.target.files?.[0];if(!file)return;
@@ -98,8 +142,8 @@ dropzone.addEventListener("drop",async event=>{
   try{openText(await file.text(),file.name)}catch(error){$("#splitterStatus").textContent="Could not read this CSV file."}
 });
 
-const dark=RomitCSV.getTheme()==="dark";
+const dark=localStorage.getItem("romitcsv.theme")==="dark";
 document.body.classList.toggle("dark",dark);
 $("#splitterTheme").setAttribute("aria-pressed",String(dark));
-$("#splitterTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#splitterTheme").setAttribute("aria-pressed",String(nextDark));RomitCSV.setTheme(nextDark?"dark":"light")};
+$("#splitterTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#splitterTheme").setAttribute("aria-pressed",String(nextDark));localStorage.setItem("romitcsv.theme",nextDark?"dark":"light")};
 $("#splitterMenu").onclick=()=>$("#splitterNav").classList.toggle("open");

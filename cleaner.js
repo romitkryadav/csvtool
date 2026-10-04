@@ -4,9 +4,43 @@ function escapeHTML(value){
   return String(value??"").replace(/[&<>\"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));
 }
 
-const detectDelimiter=(text)=>RomitCSV.detectDelimiter(text);
-const parseCSV=(text)=>RomitCSV.parseCSV(text).rows;
-const serializeCSV=(rows,delimiter=",")=>RomitCSV.serializeCSV(rows,delimiter);
+function detectDelimiter(text){
+  const first=text.replace(/^\uFEFF/,"").split(/\r?\n/).find(line=>line.trim())||"";
+  return [",",";","\t","|"].map(delimiter=>[delimiter,first.split(delimiter).length-1]).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function parseCSV(text){
+  text=String(text||"").replace(/^\uFEFF/,"");
+  const delimiter=detectDelimiter(text),rows=[],row=[],cell=[];
+  let quoted=false;
+  for(let i=0;i<text.length;i++){
+    const char=text[i],next=text[i+1];
+    if(char==='"'){
+      if(quoted&&next==='"'){cell.push('"');i++}
+      else quoted=!quoted;
+    }else if(char===delimiter&&!quoted){
+      row.push(cell.join(""));cell.length=0;
+    }else if((char==="\n"||char==="\r")&&!quoted){
+      if(char==="\r"&&next==="\n")i++;
+      row.push(cell.join(""));cell.length=0;
+      if(row.length)rows.push(row.slice());
+      row.length=0;
+    }else cell.push(char);
+  }
+  if(cell.length||row.length){
+    row.push(cell.join(""));
+    rows.push(row.slice());
+  }
+  const width=rows.reduce((max,current)=>Math.max(max,current.length),0);
+  return rows.map(current=>Array.from({length:width},(_,index)=>current[index]??""));
+}
+
+function serializeCSV(rows){
+  return rows.map(row=>row.map(value=>{
+    value=String(value??"");
+    return /[",\n\r]/.test(value)?'"'+value.replace(/"/g,'""')+'"':value;
+  }).join(",")).join("\r\n");
+}
 
 function cleanRows(source,options){
   let rows=source.map(row=>row.map(value=>options.trim?value.trim():value));
@@ -29,8 +63,10 @@ function cleanRows(source,options){
   if(options.removeEmptyColumns&&header.length){
     const dataRows=rows.slice(1);
     const keep=header.map((_,column)=>dataRows.some(row=>String(row[column]??"").trim()!==""));
-    columnsRemoved=keep.filter(value=>!value).length;
-    rows=rows.map(row=>row.filter((_,column)=>keep[column]));
+    if(keep.some(Boolean)){
+      columnsRemoved=keep.filter(value=>!value).length;
+      rows=rows.map(row=>row.filter((_,column)=>keep[column]));
+    }
   }
   return {rows,blankRowsRemoved,duplicateRowsRemoved,columnsRemoved};
 }
@@ -39,9 +75,16 @@ const uploadCard=$("#cleanerUploadCard");
 const dropzone=$("#cleanerDropzone");
 const workspace=$("#cleanerWorkspace");
 const options={trim:true,removeBlank:true,removeDuplicates:true,removeEmptyColumns:false};
-let sourceRows=[];
-let cleanedRows=[];
-let fileName="data.csv";
+let sourceRows=[
+  ["Name","Email","City","Notes","Unused"],
+  [" Ada Lovelace ","ada@example.com","London","  Trim this cell  ",""],
+  ["Grace Hopper","grace@example.com","New York","Compiler pioneer",""],
+  ["Grace Hopper","grace@example.com","New York","Compiler pioneer",""],
+  ["   ","","","",""],
+  ["Alan Turing","alan@example.com",""," ",""]
+];
+let cleanedRows=sourceRows.map(row=>row.slice());
+let fileName="sample_data.csv";
 let result=null;
 let page=1;
 const pageSize=10;
@@ -90,7 +133,6 @@ function openText(text,name){
 }
 
 render();
-workspace.hidden=true;
 $("#cleanerBrowse").onclick=()=>$("#cleanerFile").click();
 $("#cleanerFile").onchange=async event=>{
   const file=event.target.files?.[0];if(!file)return;
@@ -105,8 +147,8 @@ dropzone.addEventListener("drop",async event=>{
   try{openText(await file.text(),file.name)}catch(error){$("#cleanerStatus").textContent="Could not read this CSV file."}
 });
 
-const dark=RomitCSV.getTheme()==="dark";
+const dark=localStorage.getItem("romitcsv.theme")==="dark";
 document.body.classList.toggle("dark",dark);
 $("#cleanerTheme").setAttribute("aria-pressed",String(dark));
-$("#cleanerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#cleanerTheme").setAttribute("aria-pressed",String(nextDark));RomitCSV.setTheme(nextDark?"dark":"light")};
+$("#cleanerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#cleanerTheme").setAttribute("aria-pressed",String(nextDark));localStorage.setItem("romitcsv.theme",nextDark?"dark":"light")};
 $("#cleanerMenu").onclick=()=>$("#cleanerNav").classList.toggle("open");

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Split CSV and TSV files into smaller parts by row count, with an optional repeated header.">
-<title>Free CSV Splitter — RomitCSV</title>
+<meta name="description" content="Validate CSV structure and inspect common data quality issues in your browser.">
+<title>Free CSV Validator — RomitCSV</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,51 +13,51 @@
     <span class="brand-mark">CSV</span>
     <span>CSV<span class="brand-accent">Tools</span></span>
   </a>
-  <nav id="splitterNav" aria-label="Main navigation">
+  <nav id="validatorNav" aria-label="Main navigation">
     <a href="index.html">Home</a>
     <a href="tool.html?tool=viewer">CSV Viewer</a>
     <a href="editor.html">CSV Editor</a>
     <a href="cleaner.html">CSV Cleaner</a>
     <a href="merger.html">CSV Merger</a>
-    <a class="active" href="splitter.html">CSV Splitter</a>
-    <a href="validator.html">CSV Validator</a>
+    <a href="splitter.html">CSV Splitter</a>
+    <a class="active" href="validator.html">CSV Validator</a>
     <a href="index.html#converters">Converters</a>
   </nav>
   <div class="header-actions">
-    <button class="theme-switch" id="splitterTheme" type="button" aria-label="Toggle theme" aria-pressed="false">
+    <button class="theme-switch" id="validatorTheme" type="button" aria-label="Toggle theme" aria-pressed="false">
       <span>☼</span><i></i><span>☾</span>
     </button>
-    <button class="menu-btn" id="splitterMenu" type="button" aria-label="Open menu">Menu</button>
+    <button class="menu-btn" id="validatorMenu" type="button" aria-label="Open menu">Menu</button>
   </div>
 </header>
 
-<main class="csv-splitter-page">
+<main class="csv-validator-page">
   <section class="editor-hero">
     <div class="editor-hero-inner">
       <div>
-        <span class="viewer-pill">Free Online CSV Splitter</span>
-        <h1>Split Your CSV Files<br><span>By Row Count</span></h1>
-        <p>Break large CSV or TSV files into manageable parts.<br>Preview each part before downloading.</p>
+        <span class="viewer-pill">Free Online CSV Validator</span>
+        <h1>Check Your CSV Files<br><span>For Data Issues</span></h1>
+        <p>Find structural errors and common data-quality issues before sharing your file.<br>Your data stays in your browser.</p>
       </div>
-      <div class="editor-upload-card" id="splitterUploadCard">
-        <div class="editor-upload" id="splitterDropzone">
+      <div class="editor-upload-card" id="validatorUploadCard">
+        <div class="editor-upload" id="validatorDropzone">
           <div class="viewer-upload-icon" aria-hidden="true">
             <svg viewBox="0 0 48 48" fill="none"><path d="M24 31V8m0 0-8 8m8-8 8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 27v10a4 4 0 0 0 4 4h18a4 4 0 0 0 4-4V27" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           </div>
-          <strong>Drop a CSV file here to split</strong>
+          <strong>Drop a CSV file here to validate</strong>
           <span>or</span>
-          <input id="splitterFile" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" hidden>
-          <button class="viewer-primary" id="splitterBrowse" type="button">Browse CSV File</button>
+          <input id="validatorFile" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" hidden>
+          <button class="viewer-primary" id="validatorBrowse" type="button">Browse CSV File</button>
           <small>Supports CSV, TSV · Max file size: 50MB</small>
-          <div id="splitterStatus" class="tool-status" role="status"></div>
+          <div id="validatorStatus" class="tool-status" role="status"></div>
         </div>
       </div>
     </div>
   </section>
   <section class="editor-content">
-    <div id="splitterWorkspace" class="splitter-workspace"></div>
+    <div id="validatorWorkspace" class="validator-workspace"></div>
   </section>
 </main>
-<script src="splitter.js"></script>
+<script src="validator.js"></script>
 </body>
 </html>

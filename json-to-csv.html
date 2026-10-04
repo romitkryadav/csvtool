@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Convert JSON objects to CSV in your browser. Preview, copy, or download the result.">
+<title>JSON to CSV Converter — RomitCSV</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header viewer-header">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">CSV</span>
+    <span>CSV<span class="brand-accent">Tools</span></span>
+  </a>
+  <nav id="jsonCsvNav" aria-label="Main navigation">
+    <a href="index.html">Home</a>
+    <a href="tool.html?tool=viewer">CSV Viewer</a>
+    <a href="editor.html">CSV Editor</a>
+    <a href="cleaner.html">CSV Cleaner</a>
+    <a href="merger.html">CSV Merger</a>
+    <a href="splitter.html">CSV Splitter</a>
+    <a href="validator.html">CSV Validator</a>
+    <a href="csv-to-json.html">CSV to JSON</a>
+    <a href="csv-to-excel.html">CSV to Excel</a>
+    <a class="active" href="json-to-csv.html">JSON to CSV</a>
+  </nav>
+  <div class="header-actions">
+    <button class="theme-switch" id="jsonCsvTheme" type="button" aria-label="Toggle theme" aria-pressed="false">
+      <span>☼</span><i></i><span>☾</span>
+    </button>
+    <button class="menu-btn" id="jsonCsvMenu" type="button" aria-label="Open menu">Menu</button>
+  </div>
+</header>
+
+<main class="json-csv-page">
+  <section class="editor-hero">
+    <div class="editor-hero-inner">
+      <div>
+        <span class="viewer-pill">Free Online JSON to CSV Converter</span>
+        <h1>Convert JSON to CSV<br><span>In Your Browser</span></h1>
+        <p>Turn JSON objects into spreadsheet-ready rows.<br>Your data stays on your device.</p>
+      </div>
+      <div class="editor-upload-card" id="jsonCsvUploadCard">
+        <div class="editor-upload" id="jsonCsvDropzone">
+          <div class="viewer-upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 31V8m0 0-8 8m8-8 8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 27v10a4 4 0 0 0 4 4h18a4 4 0 0 0 4-4V27" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+          <strong>Drop a JSON file here to convert</strong>
+          <span>or</span>
+          <input id="jsonCsvFile" type="file" accept=".json,application/json" hidden>
+          <button class="viewer-primary" id="jsonCsvBrowse" type="button">Browse JSON File</button>
+          <small>Supports JSON · Max file size: 50MB</small>
+          <div id="jsonCsvStatus" class="tool-status" role="status"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="editor-content">
+    <div id="jsonCsvWorkspace" class="json-csv-workspace"></div>
+  </section>
+</main>
+<script src="json-to-csv.js"></script>
+</body>
+</html>

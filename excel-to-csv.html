@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Convert Excel workbooks to CSV in your browser. Choose a worksheet, preview, copy, or download the CSV.">
+<title>Excel to CSV Converter — RomitCSV</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header viewer-header">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">CSV</span>
+    <span>CSV<span class="brand-accent">Tools</span></span>
+  </a>
+  <nav id="excelCsvNav" aria-label="Main navigation">
+    <a href="index.html">Home</a>
+    <a href="tool.html?tool=viewer">CSV Viewer</a>
+    <a href="editor.html">CSV Editor</a>
+    <a href="cleaner.html">CSV Cleaner</a>
+    <a href="merger.html">CSV Merger</a>
+    <a href="splitter.html">CSV Splitter</a>
+    <a href="validator.html">CSV Validator</a>
+    <a href="csv-to-json.html">CSV to JSON</a>
+    <a href="json-to-csv.html">JSON to CSV</a>
+    <a href="csv-to-excel.html">CSV to Excel</a>
+    <a class="active" href="excel-to-csv.html">Excel to CSV</a>
+    <a href="csv-to-excel.html">CSV to Excel</a>
+    <a href="csv-to-pdf.html">CSV to PDF</a>
+    <a href="csv-to-sql.html">CSV to SQL</a>
+  </nav>
+  <div class="header-actions">
+    <button class="theme-switch" id="excelCsvTheme" type="button" aria-label="Toggle theme" aria-pressed="false">
+      <span>☼</span><i></i><span>☾</span>
+    </button>
+    <button class="menu-btn" id="excelCsvMenu" type="button" aria-label="Open menu">Menu</button>
+  </div>
+</header>
+
+<main class="excel-csv-page">
+  <section class="editor-hero">
+    <div class="editor-hero-inner">
+      <div>
+        <span class="viewer-pill">Free Online Excel to CSV Converter</span>
+        <h1>Convert Excel to CSV<br><span>In Your Browser</span></h1>
+        <p>Choose a worksheet and export spreadsheet data as CSV.<br>Your workbook is processed on your device.</p>
+      </div>
+      <div class="editor-upload-card" id="excelCsvUploadCard">
+        <div class="editor-upload" id="excelCsvDropzone">
+          <div class="viewer-upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 31V8m0 0-8 8m8-8 8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 27v10a4 4 0 0 0 4 4h18a4 4 0 0 0 4-4V27" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+          <strong>Drop an Excel workbook here</strong>
+          <span>or</span>
+          <input id="excelCsvFile" type="file" accept=".xlsx,.xls,.xlsm,.xlsb,.ods,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden>
+          <button class="viewer-primary" id="excelCsvBrowse" type="button">Browse Excel File</button>
+          <small>Supports XLSX, XLS, XLSM, XLSB, ODS · Max file size: 50MB</small>
+          <div id="excelCsvStatus" class="tool-status" role="status"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="editor-content">
+    <div id="excelCsvWorkspace" class="excel-csv-workspace"></div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="excel-to-csv.js"></script>
+</body>
+</html>

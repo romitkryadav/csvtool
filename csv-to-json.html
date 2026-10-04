@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Split CSV and TSV files into smaller parts by row count, with an optional repeated header.">
-<title>Free CSV Splitter — RomitCSV</title>
+<meta name="description" content="Convert CSV and TSV files to JSON in your browser. Preview, copy, or download the result.">
+<title>CSV to JSON Converter — RomitCSV</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,51 +13,53 @@
     <span class="brand-mark">CSV</span>
     <span>CSV<span class="brand-accent">Tools</span></span>
   </a>
-  <nav id="splitterNav" aria-label="Main navigation">
+  <nav id="jsonNav" aria-label="Main navigation">
     <a href="index.html">Home</a>
     <a href="tool.html?tool=viewer">CSV Viewer</a>
     <a href="editor.html">CSV Editor</a>
     <a href="cleaner.html">CSV Cleaner</a>
     <a href="merger.html">CSV Merger</a>
-    <a class="active" href="splitter.html">CSV Splitter</a>
-    <a href="validator.html">CSV Validator</a>
+    <a href="splitter.html">CSV Splitter</a>
+    <a class="active" href="csv-to-json.html">CSV to JSON</a>
+    <a href="json-to-csv.html">JSON to CSV</a>
+    <a href="csv-to-excel.html">CSV to Excel</a>
     <a href="index.html#converters">Converters</a>
   </nav>
   <div class="header-actions">
-    <button class="theme-switch" id="splitterTheme" type="button" aria-label="Toggle theme" aria-pressed="false">
+    <button class="theme-switch" id="jsonTheme" type="button" aria-label="Toggle theme" aria-pressed="false">
       <span>☼</span><i></i><span>☾</span>
     </button>
-    <button class="menu-btn" id="splitterMenu" type="button" aria-label="Open menu">Menu</button>
+    <button class="menu-btn" id="jsonMenu" type="button" aria-label="Open menu">Menu</button>
   </div>
 </header>
 
-<main class="csv-splitter-page">
+<main class="csv-json-page">
   <section class="editor-hero">
     <div class="editor-hero-inner">
       <div>
-        <span class="viewer-pill">Free Online CSV Splitter</span>
-        <h1>Split Your CSV Files<br><span>By Row Count</span></h1>
-        <p>Break large CSV or TSV files into manageable parts.<br>Preview each part before downloading.</p>
+        <span class="viewer-pill">Free Online CSV to JSON Converter</span>
+        <h1>Convert CSV to JSON<br><span>In Your Browser</span></h1>
+        <p>Turn spreadsheet rows into structured JSON in seconds.<br>Your data stays on your device.</p>
       </div>
-      <div class="editor-upload-card" id="splitterUploadCard">
-        <div class="editor-upload" id="splitterDropzone">
+      <div class="editor-upload-card" id="jsonUploadCard">
+        <div class="editor-upload" id="jsonDropzone">
           <div class="viewer-upload-icon" aria-hidden="true">
             <svg viewBox="0 0 48 48" fill="none"><path d="M24 31V8m0 0-8 8m8-8 8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 27v10a4 4 0 0 0 4 4h18a4 4 0 0 0 4-4V27" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
           </div>
-          <strong>Drop a CSV file here to split</strong>
+          <strong>Drop a CSV file here to convert</strong>
           <span>or</span>
-          <input id="splitterFile" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" hidden>
-          <button class="viewer-primary" id="splitterBrowse" type="button">Browse CSV File</button>
+          <input id="jsonFile" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" hidden>
+          <button class="viewer-primary" id="jsonBrowse" type="button">Browse CSV File</button>
           <small>Supports CSV, TSV · Max file size: 50MB</small>
-          <div id="splitterStatus" class="tool-status" role="status"></div>
+          <div id="jsonStatus" class="tool-status" role="status"></div>
         </div>
       </div>
     </div>
   </section>
   <section class="editor-content">
-    <div id="splitterWorkspace" class="splitter-workspace"></div>
+    <div id="jsonWorkspace" class="json-workspace"></div>
   </section>
 </main>
-<script src="splitter.js"></script>
+<script src="csv-to-json.js"></script>
 </body>
 </html>
