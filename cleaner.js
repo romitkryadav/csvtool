@@ -116,5 +116,5 @@ dropzone.addEventListener("drop",async event=>{
 const dark=localStorage.getItem("romitcsv.theme")==="dark";
 document.body.classList.toggle("dark",dark);
 $("#cleanerTheme").setAttribute("aria-pressed",String(dark));
-$("#cleanerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#cleanerTheme").setAttribute("aria-pressed",String(nextDark));localStorage.setItem("romitcsv.theme",nextDark?"dark":"light")};
+$("#cleanerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#cleanerTheme").setAttribute("aria-pressed",String(nextDark));RomitCSV.setTheme(nextDark?"dark":"light")};
 $("#cleanerMenu").onclick=()=>$("#cleanerNav").classList.toggle("open");
