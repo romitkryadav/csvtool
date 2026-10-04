@@ -90,5 +90,5 @@ dropzone.addEventListener("drop",event=>mergeFiles([...event.dataTransfer.files]
 const dark=localStorage.getItem("romitcsv.theme")==="dark";
 document.body.classList.toggle("dark",dark);
 $("#mergerTheme").setAttribute("aria-pressed",String(dark));
-$("#mergerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#mergerTheme").setAttribute("aria-pressed",String(nextDark));localStorage.setItem("romitcsv.theme",nextDark?"dark":"light")};
+$("#mergerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#mergerTheme").setAttribute("aria-pressed",String(nextDark));RomitCSV.setTheme(nextDark?"dark":"light")};
 $("#mergerMenu").onclick=()=>$("#mergerNav").classList.toggle("open");
