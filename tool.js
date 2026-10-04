@@ -318,7 +318,7 @@ function viewer(){
 function input(m=false){
   app.innerHTML='<input id="f" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" '+(m?"multiple":"")+'> <button class="btn" id="go">Process</button><div id="s" class="tool-status"></div><div id="out"></div>';
 }
-function files(){
+function fileText(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(reader.error||new Error("File read failed"));reader.readAsText(file);})}\nfunction files(){
   return Promise.all([...$("#f").files].map(f=>new Promise(z=>{const r=new FileReader;r.onload=()=>z(parse(r.result));r.readAsText(f)})));
 }
 function clean(){
@@ -344,7 +344,7 @@ function split(){
 }
 function validate(){
   input();$("#go").onclick=async()=>{const textValue=await fileText($("#f").files[0]); const parsed=RomitCSV.parseCSV(textValue,{pad:false}).rows; if(!parsed.length)return; const n=parsed[0].length,b=parsed.slice(1).filter(x=>x.length!==n).length;
-    $("#out").innerHTML='<p>'+Math.max(0,r.length-1)+' rows · '+n+' columns.</p><p>'+(b?b+" rows have inconsistent columns.":"CSV structure looks consistent.")+'</p>';
+    $("#out").innerHTML='<p>'+Math.max(0,parsed.length-1)+' rows · '+n+' columns.</p><p>'+(b?b+" rows have inconsistent columns.":"CSV structure looks consistent.")+'</p>';
   };
 }
 function cjson(){
