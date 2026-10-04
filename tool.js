@@ -233,7 +233,6 @@ function viewer(){
       fileLabel=file.name||"data.csv";
       fileBytes=file.size;
       page=1;pageSize=10;sortCol=-1;sortDir=1;
-      $("#viewerUpload").hidden=true;
       setStatus("");
       showWorkspace();
       render();
@@ -279,7 +278,6 @@ function viewer(){
       ["10","Sophia Jackson","sophia@example.com","26","Madrid"]
     ];
     fileLabel="sample_data.csv";fileBytes=12400;page=1;pageSize=10;sortCol=-1;sortDir=1;
-    $("#viewerUpload").hidden=true;
     showWorkspace();render();
   }
 
@@ -300,7 +298,7 @@ function viewer(){
             const parsed=parse(value);
             if(parsed.length){
               rows=parsed;fileLabel="data.csv";fileBytes=0;page=1;pageSize=10;sortCol=-1;sortDir=1;
-              $("#viewerUpload").hidden=true;showWorkspace();render();
+              showWorkspace();render();
             }else sample();
           }else sample();
         };
