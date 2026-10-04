@@ -4,43 +4,9 @@ function escapeHTML(value){
   return String(value??"").replace(/[&<>\"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));
 }
 
-function detectDelimiter(text){
-  const first=text.replace(/^\uFEFF/,"").split(/\r?\n/).find(line=>line.trim())||"";
-  return [",",";","\t","|"].map(delimiter=>[delimiter,first.split(delimiter).length-1]).sort((a,b)=>b[1]-a[1])[0][0];
-}
-
-function parseCSV(text){
-  text=String(text||"").replace(/^\uFEFF/,"");
-  const delimiter=detectDelimiter(text),rows=[],row=[],cell=[];
-  let quoted=false;
-  for(let i=0;i<text.length;i++){
-    const char=text[i],next=text[i+1];
-    if(char==='"'){
-      if(quoted&&next==='"'){cell.push('"');i++}
-      else quoted=!quoted;
-    }else if(char===delimiter&&!quoted){
-      row.push(cell.join(""));cell.length=0;
-    }else if((char==="\n"||char==="\r")&&!quoted){
-      if(char==="\r"&&next==="\n")i++;
-      row.push(cell.join(""));cell.length=0;
-      if(row.some(value=>value.trim()))rows.push(row.slice());
-      row.length=0;
-    }else cell.push(char);
-  }
-  if(cell.length||row.length){
-    row.push(cell.join(""));
-    if(row.some(value=>value.trim()))rows.push(row.slice());
-  }
-  const width=rows.reduce((max,current)=>Math.max(max,current.length),0);
-  return rows.map(current=>Array.from({length:width},(_,index)=>current[index]??""));
-}
-
-function serializeCSV(rows){
-  return rows.map(row=>row.map(value=>{
-    value=String(value??"");
-    return /[",\n\r]/.test(value)?'"'+value.replace(/"/g,'""')+'"':value;
-  }).join(",")).join("\r\n");
-}
+const detectDelimiter=(text)=>RomitCSV.detectDelimiter(text);
+const parseCSV=(text)=>RomitCSV.parseCSV(text).rows;
+const serializeCSV=(rows,delimiter=",")=>RomitCSV.serializeCSV(rows,delimiter);
 
 function downloadCSV(name,rows){
   const link=document.createElement("a");
