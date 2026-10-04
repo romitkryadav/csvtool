@@ -19,17 +19,24 @@ function downloadCSV(name,rows){
 const uploadCard=$("#editorUploadCard");
 const dropzone=$("#editorDropzone");
 const workspace=$("#editorWorkspace");
-let rows=[
-  ["ID","Name","Email","Age","City"],
-  ["1","John Doe","john@example.com","28","New York"],
-  ["2","Jane Smith","jane@example.com","32","London"],
-  ["3","Mike Johnson","mike@example.com","24","Paris"],
-  ["4","Emily Brown","emily@example.com","29","Berlin"],
-  ["5","David Wilson","david@example.com","33","Tokyo"]
-];
-let fileName="sample_data.csv";
+let rows=[["Column 1"]];
+let fileName="data.csv";
 let page=1;
 const pageSize=25;
+const history=[];
+const future=[];
+function snapshot(){return JSON.stringify(rows);}
+function recordHistory(before){
+  if(before===snapshot()) return;
+  history.push(before);
+  if(history.length>50) history.shift();
+  future.length=0;
+}
+function restoreSnapshot(value){
+  rows=JSON.parse(value);
+  page=Math.min(page,Math.max(1,Math.ceil(Math.max(0,rows.length-1)/pageSize)));
+  render();
+}
 
 function render(){
   const headers=rows[0]||[];
