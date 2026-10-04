@@ -287,7 +287,7 @@ function viewer(){
       request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains("files"))request.result.createObjectStore("files")};
       request.onsuccess=()=>{
         const db=request.result;
-        if(!db.objectStoreNames.contains("files")){db.close();sample();return}
+        if(!db.objectStoreNames.contains("files")){db.close();return}
         const tx=db.transaction("files","readwrite");
         const store=tx.objectStore("files");
         const get=store.get("pendingCsv");
@@ -308,7 +308,7 @@ function viewer(){
       };
       request.onerror=()=>setStatus("Browser storage is unavailable. Please choose the file here.",true);
     }catch(error){
-      console.error(error);sample();
+      console.error(error);setStatus("Browser storage is unavailable. Please choose the file here.",true);
     }
   }
 
