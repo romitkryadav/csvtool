@@ -47,7 +47,7 @@ function render(){
           <div><strong title="${escapeHTML(fileName)}">${escapeHTML(fileName)}</strong><span>${totalRows.toLocaleString()} rows · ${headers.length} columns</span></div>
         </div>
         <div class="editor-actions">
-          <button class="viewer-download" id="saveEditedCsv" type="button">Download CSV</button>
+          <button class="viewer-download" id="saveEditedCsv" type="button">Download CSV</button><button class="viewer-edit" id="undoEditor" type="button" ${history.length?"":"disabled"}>Undo</button><button class="viewer-edit" id="redoEditor" type="button" ${future.length?"":"disabled"}>Redo</button>
           <button class="viewer-edit" id="addEditorRow" type="button">Add row</button>
           <button class="viewer-edit" id="addEditorColumn" type="button">Add column</button>
           <button class="viewer-clear" id="clearEditor" type="button">Clear</button>
@@ -74,14 +74,24 @@ function render(){
     };
   });
   $("#saveEditedCsv").onclick=()=>downloadCSV(fileName,rows);
+  $("#undoEditor").onclick=()=>{
+    if(!history.length)return;
+    future.push(snapshot());
+    restoreSnapshot(history.pop());
+  };
+  $("#redoEditor").onclick=()=>{
+    if(!future.length)return;
+    history.push(snapshot());
+    restoreSnapshot(future.pop());
+  };
   $("#clearEditor").onclick=()=>{
     rows=[["Column 1"]];fileName="data.csv";page=1;
     workspace.hidden=true;uploadCard.hidden=false;$("#editorFile").value="";$("#editorStatus").textContent="";
   };
-  $("#addEditorRow").onclick=()=>{rows.push(Array(headers.length).fill(""));page=Math.max(1,Math.ceil((rows.length-1)/pageSize));render()};
-  $("#addEditorColumn").onclick=()=>{rows[0].push("Column "+(headers.length+1));rows.slice(1).forEach(row=>row.push(""));render()};
-  workspace.querySelectorAll(".delete-row").forEach(button=>button.onclick=()=>{rows.splice(Number(button.dataset.row),1);page=Math.min(page,Math.max(1,Math.ceil((rows.length-1)/pageSize)));render()});
-  workspace.querySelectorAll(".delete-column").forEach(button=>button.onclick=()=>{const column=Number(button.dataset.col);rows.forEach(row=>row.splice(column,1));render()});
+  $("#addEditorRow").onclick=()=>{const before=snapshot();rows.push(Array(headers.length).fill(""));recordHistory(before);page=Math.max(1,Math.ceil((rows.length-1)/pageSize));render()};
+  $("#addEditorColumn").onclick=()=>{const before=snapshot();rows[0].push("Column "+(headers.length+1));rows.slice(1).forEach(row=>row.push(""));recordHistory(before);render()};
+  workspace.querySelectorAll(".delete-row").forEach(button=>button.onclick=()=>{const before=snapshot();rows.splice(Number(button.dataset.row),1);recordHistory(before);page=Math.min(page,Math.max(1,Math.ceil((rows.length-1)/pageSize)));render()});
+  workspace.querySelectorAll(".delete-column").forEach(button=>button.onclick=()=>{const before=snapshot();const column=Number(button.dataset.col);rows.forEach(row=>row.splice(column,1));recordHistory(before);render()});
   $("#editorPrev").onclick=()=>{if(page>1){page--;render()}};
   $("#editorNext").onclick=()=>{if(page<totalPages){page++;render()}};
 }
