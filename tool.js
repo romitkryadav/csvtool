@@ -55,21 +55,53 @@ function dl(name,data,type){
 
 function viewer(){
   app.innerHTML=`
-    <div class="upload-box">
-      <input id="f" type="file" accept=".csv,text/csv">
-      <button class="btn" id="go">Open CSV</button>
-      <div id="s" class="tool-status"></div>
+    <div class="viewer-upload" id="viewerUpload">
+      <div class="viewer-upload-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M24 31V8m0 0-8 8m8-8 8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 27v10a4 4 0 0 0 4 4h18a4 4 0 0 0 4-4V27" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      </div>
+      <strong>Drop your CSV file here</strong>
+      <span>or choose a file from your computer</span>
+      <input id="f" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" hidden>
+      <button class="viewer-primary" id="go" type="button">Browse CSV</button>
+      <small>CSV or TSV · up to 50 MB · processed locally</small>
+      <div id="s" class="tool-status" role="status"></div>
     </div>
-    <div id="viewerControls" hidden></div>
-    <div id="out"></div>`;
+    <div id="viewerWorkspace" hidden>
+      <div class="viewer-filebar">
+        <div class="viewer-fileinfo">
+          <div class="viewer-fileicon">CSV</div>
+          <div><strong id="fileName">data.csv</strong><span id="fileMeta"></span></div>
+        </div>
+        <button class="viewer-secondary" id="newFile" type="button">Open another</button>
+      </div>
+      <div class="viewer-toolbar">
+        <div class="viewer-search">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input id="search" placeholder="Search rows..." autocomplete="off">
+          <kbd>/</kbd>
+        </div>
+        <div class="viewer-actions">
+          <select id="pageSize" aria-label="Rows per page"><option value="50">50 rows</option><option value="100" selected>100 rows</option><option value="250">250 rows</option></select>
+          <button class="viewer-secondary" id="download" type="button">Download CSV</button>
+        </div>
+      </div>
+      <div class="viewer-stats" id="stats"></div>
+      <div id="out"></div>
+    </div>`;
 
-  let rows=[], filtered=[], page=1, pageSize=100, sortCol=-1, sortDir=1;
+  let rows=[], filtered=[], page=1, pageSize=100, sortCol=-1, sortDir=1, fileLabel="data.csv";
+
+  function formatBytes(bytes){
+    if(!bytes)return "0 B";
+    const units=["B","KB","MB","GB"],i=Math.min(Math.floor(Math.log(bytes)/Math.log(1024)),3);
+    return (bytes/Math.pow(1024,i)).toFixed(i?1:0)+" "+units[i];
+  }
 
   function render(){
-    const out=$("#out"), controls=$("#viewerControls");
-    if(!rows.length){out.innerHTML="";controls.hidden=true;return}
-    const query=($("#search")?.value||"").trim().toLowerCase();
-    filtered=rows.slice(1).map((r,i)=>({r,index:i+1})).filter(x=>!query||x.r.some(v=>String(v).toLowerCase().includes(query)));
+    const out=$("#out"), controls=$("#viewerWorkspace");
+    if(!rows.length){controls.hidden=true;return}
+    const q=($("#search")?.value||"").trim().toLowerCase();
+    filtered=rows.slice(1).map((r,i)=>({r,index:i+1})).filter(x=>!q||x.r.some(v=>String(v).toLowerCase().includes(q)));
     if(sortCol>=0){
       filtered.sort((a,b)=>String(a.r[sortCol]??"").localeCompare(String(b.r[sortCol]??""),undefined,{numeric:true,sensitivity:"base"})*sortDir);
     }
@@ -77,51 +109,70 @@ function viewer(){
     page=Math.min(page,pages);
     const start=(page-1)*pageSize;
     const visible=filtered.slice(start,start+pageSize);
-
-    controls.hidden=false;
-    controls.innerHTML=`
-      <div class="toolbar">
-        <input id="search" placeholder="Search rows..." value="${escapeHTML(query)}">
-        <select id="pageSize"><option value="50">50 rows</option><option value="100" selected>100 rows</option><option value="250">250 rows</option></select>
-        <button class="btn" id="download">Download CSV</button>
-      </div>
-      <div class="stats">${filtered.length} matching rows · ${Math.max(0,rows.length-1)} total rows · ${rows[0]?.length||0} columns · Page ${page} of ${pages}</div>`;
-
-    let html='<div class="table-wrap"><table><thead><tr>';
+    $("#stats").textContent=`${filtered.length.toLocaleString()} matching rows · ${Math.max(0,rows.length-1).toLocaleString()} total rows · ${rows[0]?.length||0} columns`;
+    let html='<div class="viewer-table-wrap"><table><thead><tr>';
     html+=rows[0].map((h,i)=>'<th><button class="th-sort" data-col="'+i+'">'+escapeHTML(h||("Column "+(i+1)))+(sortCol===i?(sortDir===1?" ↑":" ↓"):"")+'</button></th>').join("");
     html+='</tr></thead><tbody>';
-    html+=visible.map(x=>'<tr>'+x.r.map(v=>'<td>'+escapeHTML(v)+'</td>').join("")+'</tr>').join("");
+    if(visible.length){
+      html+=visible.map(x=>'<tr><td class="row-number">'+x.index+'</td>'+x.r.map(v=>'<td>'+escapeHTML(v)+'</td>').join("")+'</tr>').join("");
+    }else{
+      html+='<tr><td colspan="'+(rows[0].length+1)+'" class="no-results">No matching rows found.</td></tr>';
+    }
     html+='</tbody></table></div>';
-    html+=`<div class="pager"><button class="btn" id="prev" ${page<=1?"disabled":""}>Previous</button><span>Page ${page} / ${pages}</span><button class="btn" id="next" ${page>=pages?"disabled":""}>Next</button></div>`;
+    html+=`<div class="viewer-pager"><span>Showing ${visible.length?start+1:0}–${Math.min(start+visible.length,filtered.length)} of ${filtered.length.toLocaleString()}</span><div><button class="viewer-page-btn" id="prev" ${page<=1?"disabled":""}>← Previous</button><span>Page ${page} / ${pages}</span><button class="viewer-page-btn" id="next" ${page>=pages?"disabled":""}>Next →</button></div></div>`;
     out.innerHTML=html;
 
     $("#search").oninput=()=>{page=1;render()};
     $("#pageSize").onchange=e=>{pageSize=+e.target.value;page=1;render()};
-    $("#download").onclick=()=>dl("data.csv",csv(rows),"text/csv");
+    $("#download").onclick=()=>dl(fileLabel.replace(/\.(csv|tsv)$/i,"")+".csv",csv(rows),"text/csv");
     $("#prev").onclick=()=>{if(page>1){page--;render()}};
     $("#next").onclick=()=>{if(page<pages){page++;render()}};
     document.querySelectorAll(".th-sort").forEach(b=>b.onclick=()=>{
-      const c=+b.dataset.col;
-      if(sortCol===c)sortDir*=-1;else{sortCol=c;sortDir=1}
+      const col=+b.dataset.col;
+      if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1}
       page=1;render();
     });
   }
 
   async function openFile(file){
     if(!file){$("#s").textContent="Choose a CSV file first.";return}
-    if(file.size>50*1024*1024){$("#s").textContent="For browser stability, please use a CSV under 50 MB.";return}
-    $("#s").textContent="Reading CSV...";
+    if(file.size>50*1024*1024){$("#s").textContent="This file is larger than 50 MB.";return}
+    $("#s").textContent="Reading your CSV…";
     try{
       const text=await file.text();
-      rows=parse(text);
-      if(!rows.length){$("#s").textContent="The CSV file is empty.";return}
-      $("#s").textContent="Loaded "+rows.length+" rows.";
-      page=1;sortCol=-1;render();
+      const parsed=parse(text);
+      if(!parsed.length){$("#s").textContent="This CSV file is empty.";return}
+      rows=parsed;fileLabel=file.name||"data.csv";page=1;sortCol=-1;sortDir=1;
+      $("#viewerUpload").hidden=true;
+      $("#viewerWorkspace").hidden=false;
+      $("#fileName").textContent=fileLabel;
+      $("#fileMeta").textContent=`${formatBytes(file.size)} · ${Math.max(0,rows.length-1).toLocaleString()} rows · ${rows[0].length} columns`;
+      $("#s").textContent="";
+      render();
+      setTimeout(()=>$("#search")?.focus(),50);
     }catch(e){$("#s").textContent="Could not read this CSV file."}
   }
 
-  $("#go").onclick=()=>openFile($("#f").files[0]);
+  $("#go").onclick=()=>$("#f").click();
   $("#f").onchange=()=>openFile($("#f").files[0]);
+  $("#newFile").onclick=()=>{
+    $("#viewerWorkspace").hidden=true;
+    $("#viewerUpload").hidden=false;
+    $("#f").value="";
+    $("#s").textContent="";
+    rows=[];filtered=[];
+  };
+
+  const upload=$("#viewerUpload");
+  ["dragenter","dragover"].forEach(type=>upload.addEventListener(type,e=>{e.preventDefault();upload.classList.add("drag")}));
+  ["dragleave","drop"].forEach(type=>upload.addEventListener(type,e=>{e.preventDefault();upload.classList.remove("drag")}));
+  upload.addEventListener("drop",e=>openFile(e.dataTransfer.files[0]));
+
+  document.addEventListener("keydown",e=>{
+    if(e.key==="/"&&document.activeElement?.tagName!=="INPUT"&&document.activeElement?.tagName!=="TEXTAREA"){
+      e.preventDefault();$("#search")?.focus();
+    }
+  });
 
   function loadPending(){
     return new Promise(resolve=>{
@@ -135,7 +186,14 @@ function viewer(){
             if(value){
               store.delete("pendingCsv");
               rows=parse(value);
-              if(rows.length){$("#s").textContent="Loaded CSV from homepage.";render()}
+              if(rows.length){
+                fileLabel="data.csv";
+                $("#viewerUpload").hidden=true;
+                $("#viewerWorkspace").hidden=false;
+                $("#fileName").textContent="data.csv";
+                $("#fileMeta").textContent=`${Math.max(0,rows.length-1).toLocaleString()} rows · ${rows[0].length} columns`;
+                render();
+              }
             }
             db.close();resolve();
           };
