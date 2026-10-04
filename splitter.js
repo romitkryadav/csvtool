@@ -23,22 +23,8 @@ function makeParts(rows,rowLimit,repeatHeader){
 const uploadCard=$("#splitterUploadCard");
 const dropzone=$("#splitterDropzone");
 const workspace=$("#splitterWorkspace");
-let rows=[
-  ["ID","Name","Email"],
-  ["1","Ada Lovelace","ada@example.com"],
-  ["2","Grace Hopper","grace@example.com"],
-  ["3","Alan Turing","alan@example.com"],
-  ["4","Katherine Johnson","kj@example.com"],
-  ["5","Edsger Dijkstra","ed@example.com"],
-  ["6","Barbara Liskov","barbara@example.com"],
-  ["7","Donald Knuth","donald@example.com"],
-  ["8","Margaret Hamilton","margaret@example.com"],
-  ["9","Tim Berners-Lee","tim@example.com"],
-  ["10","Frances Allen","frances@example.com"],
-  ["11","Mary Jackson","mary@example.com"],
-  ["12","John Backus","john@example.com"]
-];
-let fileName="sample_data.csv";
+let rows=[];
+let fileName="data.csv";
 let rowLimit=5;
 let repeatHeader=true;
 let parts=makeParts(rows,rowLimit,repeatHeader);
@@ -97,6 +83,7 @@ function openText(text,name){
 }
 
 render();
+workspace.hidden=true;
 $("#splitterBrowse").onclick=()=>$("#splitterFile").click();
 $("#splitterFile").onchange=async event=>{
   const file=event.target.files?.[0];if(!file)return;
@@ -111,7 +98,7 @@ dropzone.addEventListener("drop",async event=>{
   try{openText(await file.text(),file.name)}catch(error){$("#splitterStatus").textContent="Could not read this CSV file."}
 });
 
-const dark=localStorage.getItem("romitcsv.theme")==="dark";
+const dark=RomitCSV.getTheme()==="dark";
 document.body.classList.toggle("dark",dark);
 $("#splitterTheme").setAttribute("aria-pressed",String(dark));
 $("#splitterTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#splitterTheme").setAttribute("aria-pressed",String(nextDark));RomitCSV.setTheme(nextDark?"dark":"light")};
