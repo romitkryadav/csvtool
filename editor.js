@@ -136,6 +136,6 @@ $("#editorTheme").onclick=()=>{
   const nextDark=!document.body.classList.contains("dark");
   document.body.classList.toggle("dark",nextDark);
   $("#editorTheme").setAttribute("aria-pressed",String(nextDark));
-  localStorage.setItem("romitcsv.theme",nextDark?"dark":"light");
+  RomitCSV.setTheme(nextDark?"dark":"light");
 };
 $("#editorMenu").onclick=()=>$("#editorNav").classList.toggle("open");
