@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Edit CSV files in your browser. Update cells, rows and columns, then download your changes.">
+<title>Free CSV Editor — RomitCSV</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header viewer-header">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">CSV</span>
+    <span>CSV<span class="brand-accent">Tools</span></span>
+  </a>
+  <nav id="editorNav" aria-label="Main navigation">
+    <a href="index.html">Home</a>
+    <a href="tool.html?tool=viewer">CSV Viewer</a>
+    <a class="active" href="editor.html">CSV Editor</a>
+    <a href="index.html#converters">Converters</a>
+    <a href="index.html#tools">Utilities</a>
+    <a href="index.html#resources">Resources</a>
+    <a href="index.html#about">About</a>
+  </nav>
+  <div class="header-actions">
+    <button class="theme-switch" id="editorTheme" type="button" aria-label="Toggle theme" aria-pressed="false">
+      <span>☼</span><i></i><span>☾</span>
+    </button>
+    <button class="menu-btn" id="editorMenu" type="button" aria-label="Open menu">Menu</button>
+  </div>
+</header>
+
+<main class="csv-editor-page">
+  <section class="editor-hero">
+    <div class="editor-hero-inner">
+      <div>
+        <span class="viewer-pill">Free Online CSV Editor</span>
+        <h1>Edit Your CSV Files<br><span>In Your Browser</span></h1>
+        <p>Update values, organize rows and columns, then download your changes.<br>Your data stays in your browser.</p>
+      </div>
+      <div class="editor-upload-card" id="editorUploadCard">
+        <div class="editor-upload" id="editorDropzone">
+          <div class="viewer-upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 31V8m0 0-8 8m8-8 8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 27v10a4 4 0 0 0 4 4h18a4 4 0 0 0 4-4V27" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+          <strong>Drop a CSV file here to edit</strong>
+          <span>or</span>
+          <input id="editorFile" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" hidden>
+          <button class="viewer-primary" id="editorBrowse" type="button">Browse CSV File</button>
+          <small>Supports CSV, TSV · Max file size: 50MB</small>
+          <div id="editorStatus" class="tool-status" role="status"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="editor-content">
+    <div id="editorWorkspace" class="editor-workspace"></div>
+  </section>
+</main>
+
+<script src="editor.js"></script>
+</body>
+</html>

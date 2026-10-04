@@ -1,5 +1,6 @@
 const $=s=>document.querySelector(s);
 const kind=new URLSearchParams(location.search).get("tool")||"viewer";
+if(kind==="editor")location.replace("editor.html");
 const app=$("#app");
 
 function escapeHTML(v){
@@ -93,6 +94,10 @@ function viewer(){
     workspace.classList.add("visible");
   }
 
+  function scrollToWorkspace(){
+    requestAnimationFrame(()=>workspace?.scrollIntoView({behavior:"smooth",block:"start"}));
+  }
+
   function render(){
     if(!workspace || !rows.length)return;
     const q=($("#tableSearch")?.value||"").trim().toLowerCase();
@@ -114,7 +119,6 @@ function viewer(){
     const start=(page-1)*pageSize;
     const visible=filtered.slice(start,start+pageSize);
     const header=rows[0]||[];
-
     workspace.innerHTML=`
       <div class="viewer-data-card">
         <div class="viewer-filebar">
@@ -126,7 +130,13 @@ function viewer(){
             </div>
           </div>
           <div class="viewer-file-actions">
-            <button class="viewer-download" id="downloadCsv" type="button">Download CSV <span>⌄</span></button>
+            <div class="viewer-export">
+              <button class="viewer-download" id="exportMenuToggle" type="button" aria-expanded="false" aria-controls="exportMenu">Download CSV <span>⌄</span></button>
+              <div class="viewer-export-menu" id="exportMenu" hidden>
+                <button id="downloadCsv" type="button">Download CSV</button>
+                <button id="savePdf" type="button">Save as PDF</button>
+              </div>
+            </div>
             <button class="viewer-edit" id="editCsv" type="button">Edit</button>
             <button class="viewer-clear" id="clearCsv" type="button">Clear</button>
           </div>
@@ -152,11 +162,7 @@ function viewer(){
         <div class="viewer-table-wrap">
           <table>
             <thead><tr><th class="row-num-head">#</th>${header.map((h,i)=>'<th>'+escapeHTML(h||("Column "+(i+1)))+'<button class="th-sort" data-col="'+i+'" type="button">↕</button></th>').join("")}</tr></thead>
-            <tbody>
-              ${visible.length
-                ? visible.map(x=>'<tr><td class="row-number">'+x.index+'</td>'+x.r.map(v=>'<td title="'+escapeHTML(v)+'">'+escapeHTML(v)+'</td>').join("")+'</tr>').join("")
-                : '<tr><td colspan="'+(header.length+1)+'" class="no-results">No matching rows found.</td></tr>'}
-            </tbody>
+            <tbody>${visible.length?visible.map(x=>'<tr><td class="row-number">'+x.index+'</td>'+x.r.map(value=>'<td title="'+escapeHTML(value)+'">'+escapeHTML(value)+'</td>').join("")+'</tr>').join(""):'<tr><td colspan="'+(header.length+1)+'" class="no-results">No matching rows found.</td></tr>'}</tbody>
           </table>
         </div>
 
@@ -177,19 +183,45 @@ function viewer(){
     $("#rowsPerPage").onchange=e=>{pageSize=Number(e.target.value);page=1;render()};
     $("#sortColumn").onchange=e=>{sortCol=Number(e.target.value);sortDir=1;page=1;render()};
 
-    $("#downloadCsv").onclick=()=>dl(
-      fileLabel.replace(/\.(csv|tsv)$/i,"")+".csv",
-      csv(rows),
-      "text/csv;charset=utf-8"
-    );
+    const exportMenu=$("#exportMenu");
+    const exportToggle=$("#exportMenuToggle");
+    exportToggle.onclick=()=>{
+      exportMenu.hidden=!exportMenu.hidden;
+      exportToggle.setAttribute("aria-expanded",String(!exportMenu.hidden));
+    };
+
+    $("#downloadCsv").onclick=()=>{
+      exportMenu.hidden=true;
+      exportToggle.setAttribute("aria-expanded","false");
+      dl(fileLabel.replace(/\.(csv|tsv)$/i,"")+".csv",csv(rows),"text/csv;charset=utf-8");
+    };
+
+    $("#savePdf").onclick=()=>{
+      exportMenu.hidden=true;
+      exportToggle.setAttribute("aria-expanded","false");
+      const printView=document.createElement("section");
+      printView.className="pdf-print-view";
+      printView.innerHTML=`
+        <h1>${escapeHTML(fileLabel)}</h1>
+        <p>${Math.max(0,rows.length-1).toLocaleString()} rows · ${header.length} columns</p>
+        <table>
+          <thead><tr>${header.map(h=>"<th>"+escapeHTML(h)+"</th>").join("")}</tr></thead>
+          <tbody>${rows.slice(1).map(row=>"<tr>"+row.map(cell=>"<td>"+escapeHTML(cell)+"</td>").join("")+"</tr>").join("")}</tbody>
+        </table>`;
+      document.body.appendChild(printView);
+      try{window.print()}finally{printView.remove()}
+    };
 
     $("#editCsv").onclick=()=>{
       sessionStorage.setItem("romitcsv.editorData",JSON.stringify(rows));
-      location.href="tool.html?tool=editor";
+      sessionStorage.setItem("romitcsv.editorFileName",fileLabel);
+      sessionStorage.setItem("romitcsv.editorFileBytes",String(fileBytes));
+      location.href="editor.html";
     };
 
     $("#clearCsv").onclick=()=>{
       rows=[];filtered=[];workspace.innerHTML="";workspace.hidden=true;
+      app.hidden=false;
       $("#viewerFile").value="";
       $("#viewerUpload").hidden=false;
     };
@@ -234,9 +266,10 @@ function viewer(){
       fileBytes=file.size;
       page=1;pageSize=10;sortCol=-1;sortDir=1;
       setStatus("");
+      app.hidden=true;
       showWorkspace();
       render();
-      workspace.scrollIntoView({behavior:"smooth",block:"start"});
+      scrollToWorkspace();
     }catch(error){
       console.error(error);
       setStatus("Could not read this CSV file. Please check that it is a valid text CSV/TSV file.",true);
@@ -298,7 +331,8 @@ function viewer(){
             const parsed=parse(value);
             if(parsed.length){
               rows=parsed;fileLabel="data.csv";fileBytes=0;page=1;pageSize=10;sortCol=-1;sortDir=1;
-              showWorkspace();render();
+              app.hidden=true;
+              showWorkspace();render();scrollToWorkspace();
             }else sample();
           }else sample();
         };
@@ -362,8 +396,9 @@ function jcsv(){
 }
 const names={viewer:["CSV Viewer","Open, search, sort and inspect CSV data."],cleaner:["CSV Cleaner","Remove blank and duplicate rows."],merger:["CSV Merger","Combine multiple CSV files."],splitter:["CSV Splitter","Split CSV into smaller files."],validator:["CSV Validator","Check CSV row consistency."],csvjson:["CSV to JSON","Convert CSV rows to JSON."],jsoncsv:["JSON to CSV","Convert JSON objects to CSV."]};
 const n=names[kind]||["CSV Tool","Work with CSV data in your browser."];
-$("#title").textContent=n[0];$("#desc").textContent=n[1];
-({viewer,cleaner:clean,merger:merge,splitter:split,validator,csvjson:cjson,jsoncsv:jcsv})[kind]?.();
+if($("#title"))$("#title").textContent=n[0];
+if($("#desc"))$("#desc").textContent=n[1];
+({viewer,cleaner:clean,merger:merge,splitter:split,validator:validate,csvjson:cjson,jsoncsv:jcsv})[kind]?.();
 if(kind==="sql")viewer();
 
 const savedTheme=localStorage.getItem("romitcsv.theme")==="dark"?"dark":"light";
