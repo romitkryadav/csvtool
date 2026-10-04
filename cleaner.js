@@ -29,10 +29,8 @@ function cleanRows(source,options){
   if(options.removeEmptyColumns&&header.length){
     const dataRows=rows.slice(1);
     const keep=header.map((_,column)=>dataRows.some(row=>String(row[column]??"").trim()!==""));
-    if(keep.some(Boolean)){
-      columnsRemoved=keep.filter(value=>!value).length;
-      rows=rows.map(row=>row.filter((_,column)=>keep[column]));
-    }
+    columnsRemoved=keep.filter(value=>!value).length;
+    rows=rows.map(row=>row.filter((_,column)=>keep[column]));
   }
   return {rows,blankRowsRemoved,duplicateRowsRemoved,columnsRemoved};
 }
@@ -41,16 +39,9 @@ const uploadCard=$("#cleanerUploadCard");
 const dropzone=$("#cleanerDropzone");
 const workspace=$("#cleanerWorkspace");
 const options={trim:true,removeBlank:true,removeDuplicates:true,removeEmptyColumns:false};
-let sourceRows=[
-  ["Name","Email","City","Notes","Unused"],
-  [" Ada Lovelace ","ada@example.com","London","  Trim this cell  ",""],
-  ["Grace Hopper","grace@example.com","New York","Compiler pioneer",""],
-  ["Grace Hopper","grace@example.com","New York","Compiler pioneer",""],
-  ["   ","","","",""],
-  ["Alan Turing","alan@example.com",""," ",""]
-];
-let cleanedRows=sourceRows.map(row=>row.slice());
-let fileName="sample_data.csv";
+let sourceRows=[];
+let cleanedRows=[];
+let fileName="data.csv";
 let result=null;
 let page=1;
 const pageSize=10;
@@ -99,6 +90,7 @@ function openText(text,name){
 }
 
 render();
+workspace.hidden=true;
 $("#cleanerBrowse").onclick=()=>$("#cleanerFile").click();
 $("#cleanerFile").onchange=async event=>{
   const file=event.target.files?.[0];if(!file)return;
@@ -113,7 +105,7 @@ dropzone.addEventListener("drop",async event=>{
   try{openText(await file.text(),file.name)}catch(error){$("#cleanerStatus").textContent="Could not read this CSV file."}
 });
 
-const dark=localStorage.getItem("romitcsv.theme")==="dark";
+const dark=RomitCSV.getTheme()==="dark";
 document.body.classList.toggle("dark",dark);
 $("#cleanerTheme").setAttribute("aria-pressed",String(dark));
 $("#cleanerTheme").onclick=()=>{const nextDark=!document.body.classList.contains("dark");document.body.classList.toggle("dark",nextDark);$("#cleanerTheme").setAttribute("aria-pressed",String(nextDark));RomitCSV.setTheme(nextDark?"dark":"light")};
