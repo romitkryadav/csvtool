@@ -293,15 +293,17 @@ function viewer(){
         const get=store.get("pendingCsv");
         get.onsuccess=()=>{
           const value=get.result;
-          if(value){
-            store.delete("pendingCsv");
-            const parsed=parse(value);
-            if(parsed.length){
-              rows=parsed;fileLabel="data.csv";fileBytes=0;page=1;pageSize=10;sortCol=-1;sortDir=1;
-              app.hidden=true;
-              showWorkspace();render();scrollToWorkspace();
-            }else setStatus("");
-          }else setStatus("");
+          if(!value){setStatus("");return}
+          store.delete("pendingCsv");
+          const finish=text=>{
+            const parsed=parse(text);
+            if(!parsed.length){setStatus("This CSV file is empty.",true);return}
+            rows=parsed;fileLabel=value?.name||"data.csv";fileBytes=value?.size||0;page=1;pageSize=10;sortCol=-1;sortDir=1;
+            app.hidden=true;
+            showWorkspace();render();scrollToWorkspace();
+          };
+          if(value instanceof Blob) value.text().then(finish).catch(()=>setStatus("Could not restore the selected file.",true));
+          else finish(String(value));
         };
         get.onerror=()=>setStatus("Could not restore the selected file. Please choose it again.",true);
         tx.oncomplete=()=>db.close();
@@ -318,7 +320,8 @@ function viewer(){
 function input(m=false){
   app.innerHTML='<input id="f" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values" '+(m?"multiple":"")+'> <button class="btn" id="go">Process</button><div id="s" class="tool-status"></div><div id="out"></div>';
 }
-function fileText(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(reader.error||new Error("File read failed"));reader.readAsText(file);})}\nfunction files(){
+function fileText(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(reader.error||new Error("File read failed"));reader.readAsText(file);})}
+function files(){
   return Promise.all([...$("#f").files].map(f=>new Promise(z=>{const r=new FileReader;r.onload=()=>z(parse(r.result));r.readAsText(f)})));
 }
 function clean(){
