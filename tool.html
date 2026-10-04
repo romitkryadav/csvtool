@@ -1,1 +1,47 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CSV Tool — RomitCSV</title><link rel="stylesheet" href="style.css"></head><body><header class="header"><a class="brand" href="index.html">Romit<span>CSV</span></a><nav id="nav"><a href="index.html#tools">Tools</a><a href="index.html#converters">Converters</a><a href="index.html#resources">Resources</a></nav><button class="theme" id="theme">☾</button><button class="menu" id="menu">Menu</button></header><main class="tool-page"><div class="tool-head"><label>ROMITCSV TOOL</label><h1 id="title">CSV Tool</h1><p id="desc">Your file is processed locally in your browser.</p></div><div class="app-panel" id="app"></div></main><script src="tool.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Free online CSV Viewer by RomitCSV. Open, search, sort and inspect CSV files directly in your browser.">
+<title>CSV Viewer — RomitCSV</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <span class="brand-mark small">CSV</span>
+    <span>Romit<span class="brand-accent">CSV</span></span>
+  </a>
+  <nav id="nav">
+    <a href="index.html">Home</a>
+    <a href="index.html#tools">All Tools</a>
+    <a href="index.html#converters">Converters</a>
+    <a href="index.html#resources">Resources</a>
+  </nav>
+  <div class="header-actions">
+    <button class="theme-switch" id="theme" type="button" aria-label="Toggle theme" aria-pressed="false">
+      <span>☼</span><i></i><span>☾</span>
+    </button>
+    <button class="menu-btn" id="menu" type="button">Menu</button>
+  </div>
+</header>
+
+<main class="viewer-page">
+  <section class="viewer-hero">
+    <div class="viewer-kicker">ROMITCSV · CSV VIEWER</div>
+    <h1>Open and explore your CSV file.</h1>
+    <p>View large tables, search rows, sort columns and download your data — right in your browser.</p>
+  </section>
+
+  <section class="viewer-shell" id="app"></section>
+
+  <section class="viewer-note">
+    <strong>Your data stays in your browser.</strong>
+    <span>RomitCSV does not upload your CSV to a server for viewing.</span>
+  </section>
+</main>
+
+<script src="tool.js"></script>
+</body>
+</html>
