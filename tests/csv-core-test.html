@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RomitCSV Core Tests</title></head>
+<body><h1>RomitCSV core tests</h1><pre id="out"></pre>
+<script src="../js/csv-core.js"></script>
+<script>
+const out=document.getElementById("out"), results=[];
+function test(name,fn){try{fn();results.push("PASS  "+name)}catch(e){results.push("FAIL  "+name+" — "+e.message)}}
+function eq(a,b){if(JSON.stringify(a)!==JSON.stringify(b))throw new Error("expected "+JSON.stringify(b)+" got "+JSON.stringify(a))}
+test("quoted commas",()=>eq(RomitCSV.parseCSV('name,note\nAda,"hello, world"').rows,[["name","note"],["Ada","hello, world"]]));
+test("escaped quotes",()=>eq(RomitCSV.parseCSV('name,note\nAda,"She said ""hello"""').rows,[["name","note"],["Ada",'She said "hello"']]));
+test("multiline quoted field",()=>eq(RomitCSV.parseCSV('name,note\nAda,"line one\nline two"').rows,[["name","note"],["Ada","line one\nline two"]]));
+test("semicolon detection",()=>eq(RomitCSV.parseCSV("a;b\n1;2").delimiter,";"));
+test("tab detection",()=>eq(RomitCSV.parseCSV("a\tb\n1\t2").delimiter,"\t"));
+test("BOM",()=>eq(RomitCSV.parseCSV("\uFEFFa,b\n1,2").rows,[["a","b"],["1","2"]]));
+test("quote serialization",()=>eq(RomitCSV.serializeCSV([["a","b"],['x','say "hi"']]),'a,b\r\nx,"say ""hi"""'));
+test("delimiter serialization",()=>eq(RomitCSV.serializeCSV([["a","b"],["1","2"]],";"),"a;b\r\n1;2"));
+test("raw-width validation",()=>eq(RomitCSV.parseCSV("a,b\n1\n2,3,4",{pad:false}).rows,[["a","b"],["1"],["2","3","4"]]));
+out.textContent=results.join("\n");
+</script></body></html>
