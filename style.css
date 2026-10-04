@@ -128,3 +128,24 @@ footer a:not(.brand){font-size:9px;color:var(--muted);text-decoration:none}
 @media(max-width:560px){
 .site-header{height:58px}.brand{font-size:20px}.brand-mark{width:32px;height:32px}.site-header nav.open{top:54px}.hero-grid{padding:34px 18px}.trust-pill{font-size:8px}.hero h1{font-size:43px;letter-spacing:-2.4px}.hero p{font-size:14px}.hero p br{display:none}.dropzone{height:190px}.tools-grid{grid-template-columns:1fr;padding:0 18px}.section-heading{padding:0 18px;align-items:start;gap:12px}.section-heading h2{font-size:14px}.section-heading>a{font-size:10px}.info-grid{grid-template-columns:1fr;padding:30px 18px;gap:30px}.tool-links{grid-template-columns:1fr;padding:0 18px;gap:30px}.section{padding:34px 0}.faq{padding-left:18px;padding-right:18px}.cta{margin:0 18px 35px;padding:38px 15px}.cta h2{font-size:28px}footer{margin:0 18px;grid-template-columns:1fr 1fr;padding-bottom:60px}.copyright{right:0;bottom:25px}.footer-brand{grid-column:1/-1}
 }
+body.dark{--bg:#151b1a;--surface:#1d2523;--surface-soft:#222c29;--text:#f1f7f5;--muted:#a8b8b2;--line:#35423e;--green:#35c998;--green-dark:#52d5a8;--green-soft:#17382e;--blue:#70a7ff;background:var(--bg);color:var(--text)}
+body.dark .site-header{background:rgba(29,37,35,.95);border-color:var(--line)}
+body.dark .brand,body.dark .site-header nav a{color:var(--text)}
+body.dark .menu-btn{background:var(--surface);color:var(--text);border-color:var(--line)}
+body.dark .hero{background:linear-gradient(180deg,#172521 0%,#151b1a 100%);border-color:var(--line)}
+body.dark .trust-pill{background:#193c31;color:#62d6b0}
+body.dark .hero p,.dark .tool-card p{color:var(--muted)}
+body.dark .dropzone{background:#1a2924;border-color:#42bd96}
+body.dark .dropzone:hover,body.dark .dropzone.drag{background:#203a31}
+body.dark .tool-card{background:var(--surface);border-color:var(--line)}
+body.dark .tool-card>b{color:#91aaa1}
+body.dark .info-section{background:#17201e;border-color:var(--line)}
+body.dark .csv-info,.dark .cta{background:#18352d;border-color:#285c4d}
+body.dark .csv-info a{background:var(--surface);color:#62d6b0;border-color:#398d72}
+body.dark .all-tools,body.dark .faq details{border-color:var(--line)}
+body.dark .tool-links a,.dark .faq p{color:var(--muted)}
+body.dark .primary-btn{background:linear-gradient(135deg,#27c795,#0c9d6b)}
+body.dark footer{border-color:var(--line)}
+body.dark .theme-switch{color:var(--text)}
+body.dark .theme-switch i{background:#40514c}
+body.dark .theme-switch i:after{left:17px;background:#dff8ef}
