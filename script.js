@@ -7,14 +7,14 @@ function setTheme(mode){
   if(theme)theme.setAttribute("aria-pressed",mode==="dark");
   RomitCSV.setTheme(mode);
 }
-function savePending(text){
+function savePending(file){
   return new Promise((resolve,reject)=>{
     try{
       const request=indexedDB.open("RomitCSVDB",1);
       request.onupgradeneeded=()=>request.result.createObjectStore("files");
       request.onsuccess=()=>{
         const db=request.result,tx=db.transaction("files","readwrite");
-        tx.objectStore("files").put(text,"pendingCsv");
+        tx.objectStore("files").put(file,"pendingCsv");
         tx.oncomplete=()=>{db.close();resolve()};
         tx.onerror=()=>{db.close();reject(tx.error)};
       };
