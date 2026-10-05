@@ -5,12 +5,61 @@
 <meta name="description" content="Learn how RomitCSV handles CSV files and browser data.">
 <link rel="stylesheet" href="style.css"></head>
 <body>
-<header class="site-header"><a class="brand" href="index.html" aria-label="RomitCSV home"><span class="brand-mark">CSV</span><span>Romit<span class="brand-accent">CSV</span></span></a><nav><a href="index.html">Home</a><a href="index.html#tools">Tools</a><a href="index.html#about">About</a></nav></header>
-<main class="section" style="max-width:900px;margin:auto">
-<h1>Privacy</h1>
-<p>RomitCSV is designed so its CSV processing tools can run in your browser. The core viewer, editor, cleaner, merger, splitter, validator and CSV/JSON converters process selected data locally rather than uploading the file to a RomitCSV server.</p>
-<h2>Files</h2><p>Your selected CSV or TSV file is processed by the browser. The homepage may temporarily place the selected file in browser IndexedDB so the viewer can open it after navigation. That browser storage is not a server upload.</p>
-<h2>Browser storage</h2><p>Theme preferences and the temporary file handoff use browser storage. You can clear site data through your browser settings.</p>
-<h2>Third-party services</h2><p>Only make stronger privacy claims after checking the scripts and analytics used on the deployed site.</p>
-<h2>Changes</h2><p>This page may be updated when the site's data handling changes.</p>
-</main></body></html>
+<header class="site-header viewer-header">
+  <a class="brand" href="index.html" aria-label="RomitCSV home">
+    <span class="brand-mark" aria-hidden="true"><span>CSV</span></span>
+    <span>Romit<span class="brand-accent">CSV</span></span>
+  </a>
+  <nav id="pageNav" aria-label="Main navigation">
+    <a href="index.html">Home</a>
+    <div class="nav-dropdown">
+      <button class="nav-drop-btn" aria-haspopup="true" aria-expanded="false">View &amp; Edit <span class="nav-caret" aria-hidden="true">▾</span></button>
+      <ul class="nav-drop-menu" role="menu">
+        <li role="none"><a href="tool.html?tool=viewer" role="menuitem"><span class="ndm-icon ndm-green">◉</span><span><strong>CSV Viewer</strong><small>Open and browse CSV files</small></span></a></li>
+        <li role="none"><a href="editor.html" role="menuitem"><span class="ndm-icon ndm-blue">✎</span><span><strong>CSV Editor</strong><small>Edit and download CSV data</small></span></a></li>
+      </ul>
+    </div>
+    <div class="nav-dropdown">
+      <button class="nav-drop-btn" aria-haspopup="true" aria-expanded="false">Clean &amp; Manage <span class="nav-caret" aria-hidden="true">▾</span></button>
+      <ul class="nav-drop-menu" role="menu">
+        <li role="none"><a href="cleaner.html" role="menuitem"><span class="ndm-icon ndm-purple">✦</span><span><strong>CSV Cleaner</strong><small>Remove duplicates &amp; fix errors</small></span></a></li>
+        <li role="none"><a href="merger.html" role="menuitem"><span class="ndm-icon ndm-orange">⊞</span><span><strong>CSV Merger</strong><small>Combine multiple CSV files</small></span></a></li>
+        <li role="none"><a href="splitter.html" role="menuitem"><span class="ndm-icon ndm-cyan">⌘</span><span><strong>CSV Splitter</strong><small>Split large CSV into parts</small></span></a></li>
+        <li role="none"><a href="validator.html" role="menuitem"><span class="ndm-icon ndm-red">✓</span><span><strong>CSV Validator</strong><small>Check structure &amp; errors</small></span></a></li>
+      </ul>
+    </div>
+    <div class="nav-dropdown">
+      <button class="nav-drop-btn" aria-haspopup="true" aria-expanded="false">Convert <span class="nav-caret" aria-hidden="true">▾</span></button>
+      <ul class="nav-drop-menu" role="menu">
+        <li role="none"><a href="csv-to-json.html" role="menuitem"><span class="ndm-icon ndm-violet">{ }</span><span><strong>CSV → JSON</strong><small>Convert CSV to JSON format</small></span></a></li>
+        <li role="none"><a href="json-to-csv.html" role="menuitem"><span class="ndm-icon ndm-teal">{ }</span><span><strong>JSON → CSV</strong><small>Convert JSON to CSV format</small></span></a></li>
+        <li role="none"><a href="csv-to-excel.html" role="menuitem"><span class="ndm-icon ndm-green">▣</span><span><strong>CSV → Excel</strong><small>Export CSV as Excel file</small></span></a></li>
+        <li role="none"><a href="excel-to-csv.html" role="menuitem"><span class="ndm-icon ndm-blue">▤</span><span><strong>Excel → CSV</strong><small>Convert Excel to CSV</small></span></a></li>
+        <li role="none"><a href="csv-to-pdf.html" role="menuitem"><span class="ndm-icon ndm-red">PDF</span><span><strong>CSV → PDF</strong><small>Export as paginated PDF</small></span></a></li>
+        <li role="none"><a href="csv-to-sql.html" role="menuitem"><span class="ndm-icon ndm-purple">SQL</span><span><strong>CSV → SQL</strong><small>Generate SQL from CSV</small></span></a></li>
+      </ul>
+    </div>
+    <a href="index.html#resources">Resources</a>
+    <a href="index.html#about">About</a>
+  </nav>
+  <div class="header-actions">
+    <button class="theme-switch" id="pageTheme" type="button" aria-label="Toggle theme" aria-pressed="false"><span>☼</span><i></i><span>☾</span></button>
+    <button class="menu-btn" id="pageMenu" type="button" aria-label="Open menu">Menu</button>
+  </div>
+</header>
+
+<script src="nav.js"></script>
+<script>
+const pageNav=document.getElementById("pageNav"),pageMenu=document.getElementById("pageMenu"),pageTheme=document.getElementById("pageTheme");
+if(pageMenu)pageMenu.onclick=()=>pageNav.classList.toggle("open");
+const savedTheme=localStorage.getItem("romitcsv.theme")==="dark";
+document.body.classList.toggle("dark",savedTheme);
+if(pageTheme)pageTheme.setAttribute("aria-pressed",String(savedTheme));
+if(pageTheme)pageTheme.onclick=()=>{
+  const dark=!document.body.classList.contains("dark");
+  document.body.classList.toggle("dark",dark);
+  pageTheme.setAttribute("aria-pressed",String(dark));
+  localStorage.setItem("romitcsv.theme",dark?"dark":"light");
+};
+</script>
+</body></html>
