@@ -1,58 +1,64 @@
-/* nav.js — shared: dropdown menus only.
-   Mobile menu toggle is handled per-page by each tool's own JS.
-   Theme toggle is also handled per-page by each tool's own JS.        */
+/* nav.js — shared navigation for every RomitCSV page. */
 (function(){
-
+  function closeDropdowns(nav){
+    nav.querySelectorAll('.nav-dropdown').forEach(function(dd){
+      dd.classList.remove('open');
+      var btn=dd.querySelector('.nav-drop-btn');
+      if(btn) btn.setAttribute('aria-expanded','false');
+    });
+  }
+  function closeMenus(){
+    document.querySelectorAll('.site-header').forEach(function(header){
+      var nav=header.querySelector('nav');
+      var menu=header.querySelector('.menu-btn');
+      if(nav){nav.classList.remove('open');closeDropdowns(nav)}
+      if(menu){menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','Open menu')}
+    });
+  }
   function init(){
-
-    var dropdowns = document.querySelectorAll('.nav-dropdown');
-    if(!dropdowns.length) return;
-
-    dropdowns.forEach(function(dd){
-      var btn = dd.querySelector('.nav-drop-btn');
-      if(!btn) return;
-
-      btn.addEventListener('click', function(e){
-        e.stopPropagation();
-        var isOpen = dd.classList.contains('open');
-        // close all first
-        dropdowns.forEach(function(d){
-          d.classList.remove('open');
-          var b = d.querySelector('.nav-drop-btn');
-          if(b) b.setAttribute('aria-expanded', 'false');
-        });
-        if(!isOpen){
-          dd.classList.add('open');
-          btn.setAttribute('aria-expanded', 'true');
-        }
-      });
-    });
-
-    // Close all dropdowns on outside click
-    document.addEventListener('click', function(){
-      dropdowns.forEach(function(d){
-        d.classList.remove('open');
-        var b = d.querySelector('.nav-drop-btn');
-        if(b) b.setAttribute('aria-expanded', 'false');
-      });
-    });
-
-    // Close all dropdowns on Escape
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape'){
-        dropdowns.forEach(function(d){
-          d.classList.remove('open');
-          var b = d.querySelector('.nav-drop-btn');
-          if(b) b.setAttribute('aria-expanded', 'false');
+    document.querySelectorAll('.site-header').forEach(function(header){
+      var nav=header.querySelector('nav');
+      var menu=header.querySelector('.menu-btn');
+      if(!nav) return;
+      if(menu){
+        menu.setAttribute('aria-expanded','false');
+        menu.addEventListener('click',function(e){
+          e.preventDefault();e.stopPropagation();
+          var willOpen=!nav.classList.contains('open');
+          document.querySelectorAll('.site-header nav.open').forEach(function(other){
+            if(other!==nav){
+              other.classList.remove('open');closeDropdowns(other);
+              var otherMenu=other.closest('.site-header')?.querySelector('.menu-btn');
+              if(otherMenu){otherMenu.setAttribute('aria-expanded','false');otherMenu.setAttribute('aria-label','Open menu')}
+            }
+          });
+          nav.classList.toggle('open',willOpen);
+          if(!willOpen) closeDropdowns(nav);
+          menu.setAttribute('aria-expanded',String(willOpen));
+          menu.setAttribute('aria-label',willOpen?'Close menu':'Open menu');
         });
       }
+      nav.querySelectorAll('.nav-dropdown').forEach(function(dd){
+        var btn=dd.querySelector('.nav-drop-btn');
+        if(!btn) return;
+        btn.addEventListener('click',function(e){
+          e.preventDefault();e.stopPropagation();
+          var isOpen=dd.classList.contains('open');
+          closeDropdowns(nav);
+          if(!isOpen){dd.classList.add('open');btn.setAttribute('aria-expanded','true')}
+        });
+      });
+      nav.querySelectorAll('a').forEach(function(link){
+        link.addEventListener('click',function(){if(window.innerWidth<=900) closeMenus()});
+      });
+      if(nav.querySelector('.open-on-load') && window.innerWidth>900){
+        var dd=nav.querySelector('.open-on-load');dd.classList.add('open');
+        var btn=dd.querySelector('.nav-drop-btn');if(btn) btn.setAttribute('aria-expanded','true');
+      }
     });
+    document.addEventListener('click',function(){closeMenus()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape') closeMenus()});
+    window.addEventListener('resize',function(){if(window.innerWidth>900) closeMenus()});
   }
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
