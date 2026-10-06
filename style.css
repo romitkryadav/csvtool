@@ -926,3 +926,68 @@ body.dark .viewer-guide-grid>div,body.dark .viewer-related-tools a{background:va
   .viewer-guide-grid>div{padding:19px}
   .viewer-guide-callout{padding:19px;margin-bottom:34px}
 }
+
+
+/* Mobile index-page overflow and readability fixes */
+@media (max-width:900px){
+  .site-header{width:100%;padding:0 14px;overflow:visible}
+  .site-header .brand{flex:1;min-width:0}
+  .site-header .header-actions{flex:0 0 auto}
+  .hero-grid,.info-grid,.section,footer,.cta{max-width:100%;width:100%}
+  .hero-grid{overflow:hidden}
+  .hero-copy{width:100%;min-width:0}
+  .hero h1{max-width:100%;overflow-wrap:anywhere}
+  .hero p{max-width:100%;overflow-wrap:anywhere}
+  .dropzone{width:100%;max-width:100%;padding:20px 14px}
+  .tools-section,.all-tools,.faq{overflow:hidden}
+  .tool-card{min-width:0}
+  .tool-card h3,.tool-card p{overflow-wrap:anywhere}
+  .tool-card p{max-width:100%}
+  .info-grid>*{min-width:0}
+  .tool-links>div{min-width:0}
+  .tool-links a{overflow-wrap:anywhere}
+}
+@media (max-width:560px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  .site-header{height:58px;min-height:58px}
+  .brand{font-size:19px;letter-spacing:-1px}
+  .brand-mark{width:31px;height:31px}
+  .theme-switch{gap:4px;font-size:13px}
+  .theme-switch i{width:30px;height:18px}
+  .menu-btn{padding:7px 9px;font-size:12px;min-width:52px}
+  .site-header nav.open{left:10px;right:10px;top:56px;width:auto;max-width:calc(100vw - 20px)}
+  .hero-grid{padding:30px 14px 28px}
+  .trust-pill{max-width:100%;flex-wrap:wrap;justify-content:center;gap:5px 7px;line-height:1.3}
+  .hero h1{font-size:clamp(34px,10.5vw,43px);line-height:1.04;letter-spacing:-1.8px;margin-top:14px}
+  .hero p{font-size:14px;line-height:1.55}
+  .dropzone{height:auto;min-height:180px;margin-top:20px;padding:22px 12px}
+  .dropzone strong{font-size:14px;text-align:center}
+  .dropzone span{font-size:12px;text-align:center}
+  .dropzone small{font-size:10px;text-align:center}
+  .tools-section{padding-top:26px}
+  .section-heading{padding:0 14px;display:block;margin-bottom:16px}
+  .section-heading h2{font-size:16px;line-height:1.4;margin-top:5px}
+  .section-heading>a{display:inline-flex;margin-top:9px}
+  .tools-grid{grid-template-columns:1fr 1fr;gap:9px;padding:0 14px}
+  .tool-card{min-height:150px;padding:12px}
+  .tool-icon{width:34px;height:34px;margin-bottom:9px}
+  .tool-card h3{font-size:13px;line-height:1.25}
+  .tool-card p{font-size:11px;line-height:1.45}
+  .tool-card>b{right:9px;bottom:9px}
+  .info-grid{padding:28px 14px;gap:25px}
+  .feature p,.step p,.csv-info p{font-size:12px;line-height:1.55}
+  .all-tools{padding-top:28px}
+  .tool-links{padding:0 14px;gap:24px}
+  .tool-links h3{font-size:13px}
+  .tool-links a{font-size:12px}
+  .faq{padding-left:14px;padding-right:14px}
+  .faq h2{font-size:24px}
+  .faq summary{font-size:13px;line-height:1.45}
+  .faq p{font-size:12px}
+  .cta{margin:0 14px 30px;width:calc(100% - 28px);padding:34px 14px}
+  .cta h2{font-size:25px}
+  footer{margin:0 14px;width:calc(100% - 28px);grid-template-columns:1fr 1fr;gap:20px 14px;padding-bottom:58px}
+  footer p{font-size:11px}
+  footer a:not(.brand){font-size:11px}
+  .copyright{font-size:9px;left:0;right:auto;bottom:22px}
+}
