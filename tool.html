@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="View CSV and TSV files online in your browser. Search rows, sort columns, inspect data, download CSV, or save a PDF. 50MB max.">
+<meta name="description" content="Free online CSV viewer for opening CSV and TSV files in your browser. Search rows, sort columns, inspect data, download CSV, or save a PDF. 50MB limit.">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="https://romitcsv.com/tool.html?tool=viewer">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="RomitCSV">
-<meta property="og:title" content="Free Online CSV Viewer – View, Search & Sort CSV Files">
-<meta property="og:description" content="View CSV and TSV files in your browser. Search rows, sort columns, inspect data, download CSV, or save a PDF.">
+<meta property="og:title" content="Online CSV Viewer – View, Search & Sort CSV Files Free | RomitCSV">
+<meta property="og:description" content="Open CSV and TSV files in your browser. Search, sort and inspect your data, then download CSV or save a PDF. 50MB limit.">
 <meta property="og:url" content="https://romitcsv.com/tool.html?tool=viewer">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Free Online CSV Viewer – View, Search & Sort CSV Files">
-<meta name="twitter:description" content="View CSV and TSV files in your browser with search, sorting, pagination, CSV download and PDF printing.">
-<title>Free Online CSV Viewer – View, Search & Sort CSV Files | RomitCSV</title>
+<meta name="twitter:title" content="Online CSV Viewer – View, Search & Sort CSV Files Free | RomitCSV">
+<meta name="twitter:description" content="Open CSV and TSV files online with search, sorting, pagination, CSV download and PDF printing.">
+<title>Online CSV Viewer – View, Search & Sort CSV Files Free | RomitCSV</title>
 <link rel="stylesheet" href="style.css">
 <script type="application/ld+json">
 {
@@ -41,7 +41,7 @@
   <nav id="nav" aria-label="Main navigation">
     <a href="index.html">Home</a>
 
-    <div class="nav-dropdown open-on-load">
+    <div class="nav-dropdown">
       <button class="nav-drop-btn active" aria-haspopup="true" aria-expanded="false">
         View &amp; Edit <span class="nav-caret" aria-hidden="true">▾</span>
       </button>
@@ -129,72 +129,99 @@
   </section>
 <section class="viewer-seo-content" aria-labelledby="viewer-guide-title">
   <div class="viewer-seo-inner">
-    <p class="viewer-section-label">CSV VIEWER ONLINE</p>
-    <h2 id="viewer-guide-title">A practical way to open and inspect CSV files</h2>
-    <p>A CSV file is easy for software to exchange but not always easy to read as plain text. RomitCSV turns a CSV or TSV file into a structured table so you can check the headers, scan rows, search for a value, and sort a column without opening a full spreadsheet application.</p>
+    <p class="viewer-section-label">ONLINE CSV VIEWER</p>
+    <h2 id="viewer-guide-title">View CSV files online without opening a spreadsheet</h2>
+    <p>When you only need to inspect a CSV export, opening a full spreadsheet app can be more work than the task itself. RomitCSV gives you a simpler way to <strong>view CSV files online</strong>: choose a CSV or TSV file, let the browser read it, and inspect the data in a table. You can search the loaded rows, sort by a column, move through pages, download the CSV, or print the table to PDF.</p>
+    <p>The viewer is deliberately focused on inspection rather than trying to replace a complete spreadsheet. That makes it useful when you need to answer a small question quickly: Is the header correct? Does a particular record exist? Did an export produce the expected number of columns? Are the values in a column in the order you expect?</p>
 
     <div class="viewer-guide-grid">
       <div>
-        <h3>View a CSV file online</h3>
-        <p>Drop a file into the viewer or choose <strong>Browse CSV File</strong>. The selected file is read by your browser and displayed as a table. The viewer accepts <strong>.csv</strong> and <strong>.tsv</strong> files and checks the file size before reading it. Files larger than 50MB are rejected by the tool.</p>
-        <p>The first row is used as the table header. Rows are then shown with row numbers, and the viewer displays the loaded file name, size, row count, and column count.</p>
+        <h3>How to open a CSV file online</h3>
+        <p>Drag a file into the viewer or choose <strong>Browse CSV File</strong>. The current tool accepts <strong>.csv</strong> and <strong>.tsv</strong> files and rejects files larger than <strong>50MB</strong>. The selected file is read as text in your browser before the viewer builds the table.</p>
+        <p>After the file is loaded, the viewer shows the file name, file size, row count and column count. The first row is treated as the header row, so the tool works best with ordinary tabular exports that include column names.</p>
       </div>
       <div>
-        <h3>Search and sort the data you actually need</h3>
-        <p>Use the table search box to look across the loaded rows, or choose a column from <strong>Sort by</strong>. You can also click a column's sort control and move through the results with pagination. Rows per page can be set to 10, 25, 50, or 100.</p>
-        <p>This makes the viewer useful for quick checks such as finding a record, reviewing an export, or checking whether a column contains the values you expected.</p>
+        <h3>Search, sort and page through CSV data</h3>
+        <p>If you are looking for one value in a long export, use <strong>Search in table...</strong> instead of scanning rows manually. Search checks the displayed row values and updates the result count as you type.</p>
+        <p>For ordering, choose a field from <strong>Sort by</strong> or use the sort control in a column header. You can review 10, 25, 50 or 100 rows per page. Sorting uses a browser-side comparison that handles numeric-looking values more naturally than a simple alphabetic comparison.</p>
       </div>
     </div>
 
     <div class="viewer-guide-callout">
-      <h3>What happens to your file?</h3>
-      <p>The viewer uses browser-side JavaScript and the FileReader API to read the selected file. The viewer does not send the selected CSV or TSV contents to a RomitCSV upload endpoint. Your original file is not modified on your device by the viewer.</p>
+      <h3>Your file stays in the browser workflow</h3>
+      <p>RomitCSV reads the selected file with the browser's <code>FileReader</code> API. The viewer does not send the selected CSV or TSV contents to a RomitCSV upload endpoint. That is different from claiming that every browser extension, network layer or other software on a device can never access a local file, so the useful promise here is specific: this viewer's file-reading workflow does not upload your selected file to a RomitCSV server.</p>
     </div>
 
-    <h2>Useful after the first inspection</h2>
-    <p>The viewer is designed for reading and checking data. Once you know what is in the file, you can move to a more specific CSV tool when the task changes:</p>
+    <h2>Why a CSV can look wrong when you open it</h2>
+    <p>CSV is a text-based data format, but real-world CSV files are not always identical. The format commonly uses commas between fields, while exports from different applications can use other delimiters. The CSV format is also capable of quoted fields containing commas, line breaks or quotation marks. <a href="https://www.rfc-editor.org/rfc/rfc4180.html" target="_blank" rel="noopener noreferrer">RFC 4180</a> documents a common CSV format and the <code>text/csv</code> media type, while also noting that CSV implementations can differ.</p>
+    <p>RomitCSV's viewer detects <strong>comma, semicolon, tab or pipe</strong> delimiters from the first non-empty line. It also handles quoted fields while parsing. If a file still appears misaligned, the problem may be a delimiter or encoding convention that does not match the viewer's current parser rather than a problem with the data itself.</p>
+
+    <h3>A quick CSV troubleshooting checklist</h3>
+    <ul>
+      <li><strong>Everything appears in one column:</strong> the file may use a delimiter that is not one of the four separators this viewer detects.</li>
+      <li><strong>Headers look like data:</strong> this viewer treats the first row as the header, so files without a header row are not the best fit.</li>
+      <li><strong>Some rows have fewer values:</strong> check the source export for inconsistent columns or quoted values that were not produced correctly.</li>
+      <li><strong>The file will not open:</strong> confirm that it is a text-based CSV or TSV and that it is 50MB or smaller.</li>
+      <li><strong>You need to change the data:</strong> use the <a href="editor.html">CSV Editor</a> instead of treating the viewer as a spreadsheet replacement.</li>
+    </ul>
+
+    <h2>CSV viewer vs. spreadsheet software</h2>
+    <p>A <strong>CSV viewer</strong> is useful when the goal is to inspect data quickly. A spreadsheet application is a better choice when you need formulas, charts, complex formatting or a larger editing workflow. The right choice depends on the job, not on which tool has the longest feature list.</p>
+    <p>For a quick export check, the viewer keeps the workflow short: open the file, search or sort the rows, confirm what you need, and download or print if necessary. If the task becomes editing, cleaning, validating or converting data, RomitCSV has separate tools for those jobs.</p>
+
+    <h2>What you can do after viewing a CSV</h2>
+    <p>Once you know what is inside the file, you can move directly to the tool that matches the next step:</p>
     <div class="viewer-related-tools">
-      <a href="editor.html"><strong>CSV Editor</strong><span>Make changes to cells and save the edited CSV.</span></a>
-      <a href="validator.html"><strong>CSV Validator</strong><span>Check whether rows have a consistent number of columns.</span></a>
-      <a href="cleaner.html"><strong>CSV Cleaner</strong><span>Remove duplicate or unwanted rows with the cleaning tool.</span></a>
-      <a href="csv-to-json.html"><strong>CSV to JSON</strong><span>Turn CSV rows into JSON objects when you need a JSON output.</span></a>
-      <a href="csv-to-pdf.html"><strong>CSV to PDF</strong><span>Create a paginated PDF from CSV data.</span></a>
+      <a href="editor.html"><strong>CSV Editor</strong><span>Edit CSV data and download the updated file.</span></a>
+      <a href="validator.html"><strong>CSV Validator</strong><span>Check whether rows contain a consistent number of columns.</span></a>
+      <a href="cleaner.html"><strong>CSV Cleaner</strong><span>Remove duplicate and blank rows from CSV data.</span></a>
+      <a href="csv-to-json.html"><strong>CSV to JSON</strong><span>Convert CSV rows into JSON objects.</span></a>
+      <a href="csv-to-pdf.html"><strong>CSV to PDF</strong><span>Create a paginated PDF from the loaded CSV data.</span></a>
     </div>
 
-    <h2>CSV viewer limitations to know before you start</h2>
-    <p>This page is a viewer first, not a replacement for a full spreadsheet application. The current upload limit is 50MB. The parser detects one of four delimiters — comma, semicolon, tab, or pipe — from the first non-empty line, so an unusual file format may not parse as you expect. The viewer also treats the first row as the header row.</p>
-    <p>If your file does not open correctly, check that it is a text-based CSV or TSV file and that its delimiter matches one of the formats the viewer can detect. For structural problems, the <a href="validator.html">CSV Validator</a> is the more appropriate next step.</p>
+    <h2>Technical notes and limitations</h2>
+    <p>The viewer uses the browser's <code>FileReader.readAsText()</code> workflow to read the selected file. MDN notes that <code>readAsText()</code> loads the entire file into memory, which is one reason it is important not to interpret the 50MB upload limit as a promise that every 50MB file will feel equally fast on every device. Your available memory, browser and the structure of the CSV can affect performance.</p>
+    <p>The parser recognizes comma, semicolon, tab and pipe delimiters, supports quoted fields, removes a UTF-8 byte-order mark when present, and uses the first parsed row as the table header. These are practical parsing choices rather than a claim that every possible CSV dialect is supported. For the underlying browser API, see <a href="https://developer.mozilla.org/en-US/docs/Web/API/FileReader" target="_blank" rel="noopener noreferrer">MDN's FileReader documentation</a>.</p>
 
     <section class="viewer-faq" aria-labelledby="viewer-faq-title">
       <p class="viewer-section-label">COMMON QUESTIONS</p>
       <h2 id="viewer-faq-title">CSV Viewer FAQ</h2>
       <details>
         <summary>How do I view a CSV file online?</summary>
-        <p>Open this page, drag a CSV file into the upload area or click <strong>Browse CSV File</strong>. The file is read in your browser and displayed as a searchable, sortable table.</p>
+        <p>Open the RomitCSV CSV Viewer, drag your CSV file into the upload area or click <strong>Browse CSV File</strong>. The selected file is read in your browser and displayed as a table.</p>
       </details>
       <details>
-        <summary>Can I open a TSV file?</summary>
-        <p>Yes. The viewer accepts both CSV and TSV files. It detects comma, semicolon, tab, or pipe separators from the first non-empty line.</p>
+        <summary>Can I view a TSV file online?</summary>
+        <p>Yes. The viewer accepts <strong>.tsv</strong> files as well as <strong>.csv</strong> files. It detects comma, semicolon, tab or pipe separators from the first non-empty line.</p>
       </details>
       <details>
         <summary>Can I search inside a CSV file?</summary>
-        <p>Yes. After a file is loaded, use <strong>Search in table...</strong> to search across the displayed data. The matching rows are then paginated.</p>
+        <p>Yes. After loading a file, use <strong>Search in table...</strong> to find matching values across the displayed rows. The matching results remain paginated.</p>
       </details>
       <details>
-        <summary>Can I sort CSV rows?</summary>
+        <summary>Can I sort CSV rows online?</summary>
         <p>Yes. Select a column from <strong>Sort by</strong> or use the sort control in a table header. The viewer supports ascending and descending sorting.</p>
       </details>
       <details>
         <summary>What is the maximum CSV file size?</summary>
-        <p>The current viewer rejects files larger than 50MB.</p>
+        <p>The current viewer rejects files larger than <strong>50MB</strong>. Performance can still vary with the device, browser and complexity of the file because the current reader loads the file into memory.</p>
       </details>
       <details>
-        <summary>Can I download the CSV after viewing it?</summary>
-        <p>Yes. The loaded data can be downloaded as a CSV. The viewer also provides a Save as PDF option that opens the browser's print flow for the loaded table.</p>
+        <summary>Does the CSV viewer upload my file?</summary>
+        <p>The viewer reads the selected file with browser-side JavaScript and does not send the selected CSV or TSV contents to a RomitCSV upload endpoint.</p>
+      </details>
+      <details>
+        <summary>Can I download a CSV after viewing it?</summary>
+        <p>Yes. Use <strong>Download CSV</strong> to save the loaded data as a CSV. The viewer also has <strong>Save as PDF</strong>, which opens the browser's print flow for the loaded table.</p>
+      </details>
+      <details>
+        <summary>Can I edit a CSV in the viewer?</summary>
+        <p>The viewer is primarily for reading, searching and sorting. Use the <a href="editor.html">CSV Editor</a> when you need to change cell values and save an edited file.</p>
       </details>
     </section>
   </div>
 </section>
+
 </main>
 
 <script src="nav.js"></script>
