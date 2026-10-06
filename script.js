@@ -1,5 +1,5 @@
 
-const input=document.getElementById("fileInput"),drop=document.getElementById("dropzone"),status=document.getElementById("fileStatus"),theme=document.getElementById("themeBtn"),menu=document.getElementById("menuBtn");
+const input=document.getElementById("fileInput"),drop=document.getElementById("dropzone"),status=document.getElementById("fileStatus"),theme=document.getElementById("themeBtn");
 const go=t=>location.href="tool.html?tool="+t;
 function choose(){if(input)input.click()}
 function setTheme(mode){
@@ -56,32 +56,3 @@ if(theme){
   setTheme(localStorage.getItem("romitcsv.theme")==="dark"?"dark":"light");
   theme.onclick=()=>setTheme(document.body.classList.contains("dark")?"light":"dark");
 }
-if(menu)menu.onclick=()=>{const nav=document.getElementById("mainNav");if(nav)nav.classList.toggle("open")};
-
-
-// ── Nav dropdowns ────────────────────────────────────────────
-(function(){
-  var dropdowns = document.querySelectorAll('.nav-dropdown');
-  dropdowns.forEach(function(dd){
-    var btn = dd.querySelector('.nav-drop-btn');
-    if(!btn) return;
-    btn.addEventListener('click', function(e){
-      e.stopPropagation();
-      var isOpen = dd.classList.contains('open');
-      // close all others
-      dropdowns.forEach(function(d){ d.classList.remove('open'); d.querySelector('.nav-drop-btn') && d.querySelector('.nav-drop-btn').setAttribute('aria-expanded','false'); });
-      if(!isOpen){
-        dd.classList.add('open');
-        btn.setAttribute('aria-expanded','true');
-      }
-    });
-  });
-  // close on outside click
-  document.addEventListener('click', function(){
-    dropdowns.forEach(function(d){ d.classList.remove('open'); var b=d.querySelector('.nav-drop-btn'); if(b) b.setAttribute('aria-expanded','false'); });
-  });
-  // close on Escape
-  document.addEventListener('keydown', function(e){
-    if(e.key==='Escape') dropdowns.forEach(function(d){ d.classList.remove('open'); var b=d.querySelector('.nav-drop-btn'); if(b) b.setAttribute('aria-expanded','false'); });
-  });
-})();
