@@ -51,10 +51,6 @@
       nav.querySelectorAll('a').forEach(function(link){
         link.addEventListener('click',function(){if(window.innerWidth<=900) closeMenus()});
       });
-      if(nav.querySelector('.open-on-load') && window.innerWidth>900){
-        var dd=nav.querySelector('.open-on-load');dd.classList.add('open');
-        var btn=dd.querySelector('.nav-drop-btn');if(btn) btn.setAttribute('aria-expanded','true');
-      }
     });
     document.addEventListener('click',function(){closeMenus()});
     document.addEventListener('keydown',function(e){if(e.key==='Escape') closeMenus()});
