@@ -416,4 +416,3 @@ $("#theme").onclick=()=>{
   document.body.classList.toggle("dark",dark);
   localStorage.setItem("romitcsv.theme",dark?"dark":"light");
 };
-$("#menu").onclick=()=>$("#nav").classList.toggle("open");
